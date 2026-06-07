@@ -5,7 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ELOHIM FAST FOOD - Los mejores Philly Cheesesteaks</title>
   <meta name="description" content="Menú digital de ELOHIM FAST FOOD. Los mejores Philly Cheesesteaks de la ciudad. Pide por WhatsApp.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230a0a0a'/%3E%3Crect x='4' y='5' width='24' height='4' rx='2' fill='%23ff6b00'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='16' fill='%23fff'%3EE%3C/text%3E%3Crect x='4' y='25' width='24' height='4' rx='2' fill='%23ff6b00'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    /* ===== PASSWORD MODAL ===== */
+    #pwOverlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.85);
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(6px);
+      transition: opacity 0.5s;
+    }
+    #pwOverlay.hidden { opacity: 0; pointer-events: none; }
+    #pwModal {
+      background: #111; border: 1px solid #333; border-radius: 20px;
+      padding: 2.5rem 2rem; max-width: 380px; width: 90%;
+      text-align: center; box-shadow: 0 0 60px rgba(255,107,0,0.2);
+    }
+    #pwModal h2 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+      color: #ff6b00; letter-spacing: 2px; margin-bottom: 0.3rem;
+    }
+    #pwModal p { font-size: 0.85rem; color: #888; margin-bottom: 1.5rem; }
+    #pwModal .logo-lines {
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 1rem;
+    }
+    #pwModal .logo-lines .line {
+      width: 100%; height: 4px; background: #ff6b00; border-radius: 2px;
+    }
+    #pwModal .logo-lines span {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem;
+      color: #fff; letter-spacing: 3px; line-height: 1.2; padding: 0.15rem 0;
+    }
+    #pwInput {
+      width: 100%; padding: 0.8rem 1rem;
+      background: #1a1a1a; border: 1px solid #333; border-radius: 10px;
+      color: #fff; font-size: 1rem; text-align: center;
+      outline: none; transition: border-color 0.3s;
+    }
+    #pwInput:focus { border-color: #ff6b00; }
+    #pwInput::placeholder { color: #555; }
+    #pwError {
+      font-size: 0.8rem; color: #ff4500; min-height: 1.2rem; margin-top: 0.5rem;
+    }
+    #pwSubmit {
+      width: 100%; margin-top: 1rem; padding: 0.8rem;
+      background: linear-gradient(135deg, #ff4500, #ff6b00);
+      border: none; border-radius: 10px; color: #fff;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    #pwSubmit:hover {
+      transform: scale(1.02); box-shadow: 0 0 20px rgba(255,107,0,0.4);
+    }
+  </style>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -978,13 +1032,21 @@
 </head>
 <body>
 
-  <!-- ===== MOBILE NAV OVERLAY ===== -->
-  <nav class="mobile-nav" id="mobileNav">
-    <a href="#hero" onclick="closeMobileNav()">Inicio</a>
-    <a href="#menu" onclick="closeMobileNav()">Menú</a>
-    <a href="javascript:void(0)" onclick="closeMobileNav(); openCartSidebar();">Pedido</a>
-    <a href="#contacto" onclick="closeMobileNav()">Contacto</a>
-  </nav>
+  <!-- ===== PASSWORD MODAL ===== -->
+  <div id="pwOverlay">
+    <div id="pwModal">
+      <div class="logo-lines">
+        <div class="line"></div>
+        <span>ELOHIM</span>
+        <div class="line"></div>
+      </div>
+      <h2>Acceso Protegido</h2>
+      <p>Ingresa la contraseña para ver el menú</p>
+      <input type="password" id="pwInput" placeholder="Contraseña" autocomplete="off">
+      <div id="pwError"></div>
+      <button id="pwSubmit">Ingresar</button>
+    </div>
+  </div>
 
   <!-- ===== NAVBAR ===== -->
   <header class="navbar" id="navbar">
@@ -1143,7 +1205,7 @@
           <p><i class="fas fa-clock"></i> <strong>Horarios:</strong></p>
           <p style="margin-left:1.5rem;">Lun - Sáb: 11:00 AM - 10:00 PM</p>
           <p style="margin-left:1.5rem;">Domingo: 12:00 PM - 8:00 PM</p>
-          <p><i class="fas fa-location-dot"></i> <span id="addressDisplay">Av. Principal, Local 5, Ciudad</span></p>
+          <p><i class="fas fa-location-dot"></i> <a href="https://www.google.com/maps/search/?api=1&query=Av.+Principal,+Local+5,+Ciudad" target="_blank" rel="noopener" style="color:#ccc;text-decoration:underline;">Av. Principal, Local 5, Ciudad</a></p>
         </div>
 
         <div class="footer-info">
@@ -1735,6 +1797,31 @@
       animate();
       window.addEventListener('resize', resize);
     }
+
+    // ===== PASSWORD MODAL =====
+    const PW = 'philly2026';
+    const pwOverlay = document.getElementById('pwOverlay');
+    const pwInput = document.getElementById('pwInput');
+    const pwError = document.getElementById('pwError');
+    const pwSubmit = document.getElementById('pwSubmit');
+
+    function checkPassword() {
+      if (pwInput.value === PW) {
+        pwOverlay.classList.add('hidden');
+        pwInput.value = '';
+        pwError.textContent = '';
+      } else {
+        pwError.textContent = 'Contraseña incorrecta';
+        pwInput.focus();
+        pwInput.select();
+      }
+    }
+
+    pwSubmit.addEventListener('click', checkPassword);
+    pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
+
+    // Show modal on load
+    pwInput.focus();
 
     // ===== FOOTER YEAR =====
     document.getElementById('year').textContent = new Date().getFullYear();
