@@ -6,6 +6,11 @@
   <title>ELOHIM FAST FOOD - Los mejores Philly Cheesesteaks</title>
   <meta name="description" content="Menú digital de ELOHIM FAST FOOD. Los mejores Philly Cheesesteaks de la ciudad. Pide por WhatsApp.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ELOHIM">
+  <meta name="theme-color" content="#0a0a0a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <style>
     /* ===== WATERMARK ===== */
@@ -1761,6 +1766,11 @@
     renderMenu();
     updateCartUI();
     initEmbers();
+
+    // ===== SERVICE WORKER (PWA) =====
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
   </script>
 </body>
 </html>
