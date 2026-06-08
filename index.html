@@ -5,9 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ELOHIM FAST FOOD - Los mejores Philly Cheesesteaks</title>
   <meta name="description" content="Menú digital de ELOHIM FAST FOOD. Los mejores Philly Cheesesteaks de la ciudad. Pide por WhatsApp.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230a0a0a'/%3E%3Crect x='4' y='5' width='24' height='4' rx='2' fill='%23ff6b00'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='16' fill='%23fff'%3EE%3C/text%3E%3Crect x='4' y='25' width='24' height='4' rx='2' fill='%23ff6b00'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <style>
+    /* ===== WATERMARK ===== */
+    #watermark {
+      position: fixed; inset: 0; z-index: 10000;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    #watermark img {
+      width: min(80vw, 800px); height: auto;
+      opacity: 0.1;
+      filter: brightness(0) invert(1);
+    }
+
     /* ===== PASSWORD MODAL ===== */
     #pwOverlay {
       position: fixed; inset: 0; z-index: 9999;
@@ -28,7 +40,7 @@
     }
     #pwModal p { font-size: 0.85rem; color: #888; margin-bottom: 1.5rem; }
     #pwModal .logo-lines {
-      display: flex; flex-direction: column; align-items: center;
+      display: inline-flex; flex-direction: column; align-items: stretch;
       margin-bottom: 1rem;
     }
     #pwModal .logo-lines .line {
@@ -1048,6 +1060,9 @@
     </div>
   </div>
 
+  <!-- ===== WATERMARK ===== -->
+  <div id="watermark"><img src="https://amieluzbody.vercel.app/logo.svg" alt="Gladiador Apps"></div>
+
   <!-- ===== NAVBAR ===== -->
   <header class="navbar" id="navbar">
     <a href="#hero" class="logo">
@@ -1081,7 +1096,7 @@
         <p>Los mejores Philly Cheesesteaks de la ciudad. Carne jugosa, queso fundido y el sabor que enciende tu paladar.</p>
         <div class="hero-cta">
           <a href="#menu" class="btn btn-primary"><i class="fas fa-fire"></i> Ver Menú</a>
-          <a href="https://wa.me/584129673216?text=¡Hola!%20Quiero%20información%20sobre%20el%20menú" target="_blank" rel="noopener" class="btn btn-secondary"><i class="fab fa-whatsapp"></i> Pedir Ahora</a>
+            <a href="https://wa.me/584243646260?text=¡Hola!%20Quiero%20información%20sobre%20el%20menú" target="_blank" rel="noopener" class="btn btn-secondary"><i class="fab fa-whatsapp"></i> Pedir Ahora</a>
         </div>
       </div>
       <div class="hero-image">
@@ -1201,7 +1216,7 @@
       <div class="footer-grid">
         <div class="footer-info">
           <h4><i class="fas fa-location-dot"></i> ELOHIM FAST FOOD</h4>
-          <p><i class="fas fa-phone"></i> <a href="tel:+584129673216" id="phoneDisplay">+58 412-967-3216</a></p>
+          <p><i class="fas fa-phone"></i> <a href="tel:+584243646260" id="phoneDisplay">+58 424-364-6260</a></p>
           <p><i class="fas fa-clock"></i> <strong>Horarios:</strong></p>
           <p style="margin-left:1.5rem;">Lun - Sáb: 11:00 AM - 10:00 PM</p>
           <p style="margin-left:1.5rem;">Domingo: 12:00 PM - 8:00 PM</p>
@@ -1211,10 +1226,8 @@
         <div class="footer-info">
           <h4><i class="fas fa-globe"></i> Síguenos</h4>
           <div class="footer-social">
-            <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-            <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://wa.me/584129673216" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.tiktok.com/@elohimvnz" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="https://wa.me/584243646260" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
           </div>
           <p style="margin-top:1rem;color:#666;font-size:0.85rem;">
             Haz tu pedido por WhatsApp y recibe en casa o retira en local.
@@ -1253,9 +1266,9 @@
   <script>
     // ================================================================
     // 👇 CONFIGURA AQUÍ TU NÚMERO DE WHATSAPP (código de país + número)
-    //    Ejemplo: '584129673216' (formato internacional sin +)
-    // ================================================================
-    const whatsappNumber = '584129673216';
+    //    Ejemplo: '584243646260' (formato internacional sin +)
+
+    const whatsappNumber = '584243646260';
 
     // ===== MENU DATA =====
     const menuData = [
@@ -1562,6 +1575,8 @@
     }
 
     // ===== GEOLOCATION =====
+    let lastGpsCoords = null;
+
     function getLocation() {
       const btn = document.getElementById('btnGps');
       const status = document.getElementById('gpsStatus');
@@ -1579,6 +1594,7 @@
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
           const { latitude, longitude } = pos.coords;
+          lastGpsCoords = { latitude, longitude };
           status.textContent = `📍 ${latitude.toFixed(5)}, ${longitude.toFixed(5)} — obteniendo dirección...`;
 
           try {
@@ -1643,7 +1659,12 @@
 
       const notesStr = notes ? `\nNotas: ${notes}` : '';
 
-      const message = `¡Hola! Quiero hacer un pedido:%0A%0A${encodeURIComponent(itemsStr)}%0A%0ATotal: $${total}%0A%0AMi nombre es ${encodeURIComponent(name)}, para entrega en ${encodeURIComponent(address)}. Pagaré con ${encodeURIComponent(payment)}.${encodeURIComponent(notesStr)}%0A%0A¡Gracias!`;
+      // Include Google Maps link if GPS was used
+      const mapsLink = lastGpsCoords
+        ? `\n📍 Ubicación: https://www.google.com/maps?q=${lastGpsCoords.latitude},${lastGpsCoords.longitude}`
+        : '';
+
+      const message = `¡Hola! Quiero hacer un pedido:%0A%0A${encodeURIComponent(itemsStr)}%0A%0ATotal: $${total}%0A%0AMi nombre es ${encodeURIComponent(name)}, para entrega en ${encodeURIComponent(address)}. Pagaré con ${encodeURIComponent(payment)}.${encodeURIComponent(notesStr)}${encodeURIComponent(mapsLink)}%0A%0A¡Gracias!`;
 
       const url = `https://wa.me/${whatsappNumber}?text=${message}`;
 
@@ -1653,6 +1674,7 @@
       // Reset cart and form
       showToast('✅ Pedido enviado a WhatsApp. ¡Gracias!');
       cart = [];
+      lastGpsCoords = null;
       updateCartUI();
       document.getElementById('orderForm').reset();
       updateWhatsAppButton();
