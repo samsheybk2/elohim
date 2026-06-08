@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acta de Entrega - ELOHIM Fast Food</title>
+<style>
+  @page { margin: 2cm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.6;
+    padding: 2cm;
+    max-width: 900px;
+    margin: 0 auto;
+    background: #f5f5f5;
+  }
+  .document {
+    background: #fff;
+    padding: 3rem 3.5rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #ff6b00;
+    margin-bottom: 2rem;
+  }
+  .header-left { display: flex; align-items: center; gap: 1rem; }
+  .header-left img { height: 48px; }
+  .header-left .divider {
+    width: 2px; height: 40px; background: #ddd;
+  }
+  .header-left .gladiador-text {
+    font-size: 1.1rem; font-weight: 700; color: #333;
+    letter-spacing: 1px;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 0.85rem; color: #666;
+  }
+  .header-right strong {
+    color: #ff6b00; font-size: 1.2rem;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    letter-spacing: 2px;
+  }
+  h1 {
+    font-size: 1.8rem; color: #1a1a1a;
+    text-align: center; margin-bottom: 0.3rem;
+  }
+  .subtitle {
+    text-align: center; color: #666;
+    font-size: 0.95rem; margin-bottom: 2rem;
+  }
+  .ref {
+    text-align: right; font-size: 0.85rem; color: #888;
+    margin-bottom: 1.5rem;
+  }
+  .ref span { background: #f5f5f5; padding: 0.2rem 0.8rem; border-radius: 4px; }
+  .section { margin-bottom: 1.8rem; }
+  .section h2 {
+    font-size: 1rem; color: #ff6b00;
+    text-transform: uppercase; letter-spacing: 2px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.4rem; margin-bottom: 0.8rem;
+  }
+  .section p, .section li { font-size: 0.9rem; color: #444; }
+  .section ul { padding-left: 1.5rem; }
+  .section ul li { margin-bottom: 0.3rem; }
+
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .info-box {
+    background: #fafafa; border: 1px solid #eee;
+    border-radius: 6px; padding: 1rem;
+  }
+  .info-box label {
+    font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 1px; color: #999; display: block;
+    margin-bottom: 0.2rem;
+  }
+  .info-box .value { font-weight: 600; color: #1a1a1a; font-size: 0.95rem; }
+
+  table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.88rem; }
+  th { background: #fafafa; text-align: left; padding: 0.6rem 0.8rem; border-bottom: 2px solid #eee; color: #555; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; }
+  td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #eee; color: #444; }
+  td:last-child, th:last-child { text-align: right; }
+  .total-row td { border-top: 2px solid #333; font-weight: 700; color: #1a1a1a; border-bottom: none; padding-top: 0.8rem; }
+  .total-row td:last-child { color: #ff6b00; font-size: 1.05rem; }
+
+  .badge {
+    display: inline-block; background: #e8f5e9; color: #2e7d32;
+    padding: 0.15rem 0.6rem; border-radius: 50px;
+    font-size: 0.78rem; font-weight: 600;
+  }
+
+  .signatures {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2rem; margin-top: 2.5rem; padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+  }
+  .signature-box { text-align: center; }
+  .signature-box .line {
+    width: 100%; height: 1px; background: #333;
+    margin: 2.5rem 0 0.4rem;
+  }
+  .signature-box label { font-size: 0.78rem; color: #888; }
+  .signature-box .name { font-weight: 700; font-size: 0.9rem; color: #1a1a1a; margin-top: 0.2rem; }
+
+  .footer-note {
+    text-align: center; margin-top: 2rem;
+    font-size: 0.78rem; color: #aaa;
+    border-top: 1px solid #eee; padding-top: 1rem;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .document { box-shadow: none; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="document">
+  <div class="header">
+    <div class="header-left">
+      <img src="https://amieluzbody.vercel.app/logo.svg" alt="Gladiador Apps" style="height:42px;">
+      <div class="divider"></div>
+      <div class="gladiador-text">GLADIADOR APPS</div>
+    </div>
+    <div class="header-right">
+      <strong>ELOHIM</strong><br>
+      FAST FOOD
+    </div>
+  </div>
+
+  <h1>Acta de Entrega de Proyecto</h1>
+  <p class="subtitle">Catálogo Web — Desarrollo de Página Web Estática con Menú Digital e Integración WhatsApp</p>
+
+  <div class="ref">
+    <span>Cotización Ref: COT-2026-001 &mdash; 07/06/2026</span>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-box">
+      <label>Cliente</label>
+      <div class="value">ELOHIM Fast Food</div>
+      <div style="font-size:0.82rem;color:#666;margin-top:0.2rem;">Emprendimiento de Comida Rápida</div>
+    </div>
+    <div class="info-box">
+      <label>Desarrollador</label>
+      <div class="value">Gladiador Apps</div>
+      <div style="font-size:0.82rem;color:#666;margin-top:0.2rem;">Samir Vasquez</div>
+    </div>
+    <div class="info-box">
+      <label>Fecha de Entrega</label>
+      <div class="value">07 de junio de 2026</div>
+    </div>
+    <div class="info-box">
+      <label>Estatus</label>
+      <div class="value"><span class="badge">✓ Entregado</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>1. Objeto del Documento</h2>
+    <p>Por medio de la presente, <strong>Gladiador Apps</strong> hace entrega formal al emprendimiento <strong>ELOHIM Fast Food</strong> del proyecto de Catálogo Web contratado, conforme a los términos, especificaciones y condiciones establecidos en la cotización de referencia <strong>COT-2026-001</strong>.</p>
+  </div>
+
+  <div class="section">
+    <h2>2. Descripción del Proyecto Entregado</h2>
+    <p>Se entrega una página web estática, moderna y completamente responsiva (adaptable a dispositivos móviles y de escritorio), que incluye las siguientes funcionalidades y secciones:</p>
+    <ul>
+      <li><strong>Diseño visual adaptativo (responsive)</strong> con paleta de colores negro profundo y naranja/rojo (temática de fuego y parrilla).</li>
+      <li><strong>Barra de navegación</strong> con logo ELOHIM (rayas simulando pan), enlaces a Inicio, Menú, Carrito y Contacto, y menú hamburguesa para móviles.</li>
+      <li><strong>Hero section</strong> con fotografía de fondo (<em>brasas</em>) con efecto blur, partículas de ascuas animadas en canvas, y foto del producto estrella.</li>
+      <li><strong>Menú digital interactivo</strong> con 14 productos organizados en 4 categorías (Philly Cheesesteaks, Hamburguesas, Combos, Bebidas), filtro por pestañas, imágenes de productos desde la carpeta <code>products/</code>, y botón "Añadir al carrito".</li>
+      <li><strong>Carrito lateral flotante</strong> con panel deslizante, control de cantidades (+/-), resumen de total, y formulario de pedido que se despliega al hacer clic en "Pagar Ahora".</li>
+      <li><strong>Formulario de pedido</strong> con campos de nombre, dirección (con botón GPS para geolocalización automática), método de pago, notas y checkbox de términos.</li>
+      <li><strong>Integración WhatsApp</strong> que genera un mensaje estructurado con el detalle del pedido, total, datos del cliente, y enlace de Google Maps cuando se usa geolocalización.</li>
+      <li><strong>Sección de contacto y ubicación</strong> con mapa de Google Maps, horarios, teléfono, y enlace a TikTok y WhatsApp.</li>
+      <li><strong>Modal de acceso protegido</strong> con contraseña (<em>philly2026</em>) para visualizar la página.</li>
+      <li><strong>Marca de agua</strong> de Gladiador Apps (blanca al 10% de opacidad) visible en toda la pantalla.</li>
+      <li><strong>Favicon</strong> personalizado con la letra "E" y rayas naranjas (estilo del logo ELOHIM).</li>
+      <li><strong>Pie de página</strong> con enlace a Gladiador Apps.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Detalle de la Inversión</h2>
+    <table>
+      <tr>
+        <th>Concepto</th>
+        <th>Monto</th>
+      </tr>
+      <tr>
+        <td>Desarrollo Web Estático + Menú Digital + Integración WhatsApp</td>
+        <td>$120.00</td>
+      </tr>
+      <tr>
+        <td>Descuento Especial (Apoyo a Emprendedores)</td>
+        <td>−$35.00</td>
+      </tr>
+      <tr class="total-row">
+        <td>Total Neto a Pagar</td>
+        <td>$85.00</td>
+      </tr>
+    </table>
+    <p style="font-size:0.82rem;color:#888;">Puede ser cancelado en Bolívares (VES) a la tasa oficial del BCV vigente el día del pago.</p>
+  </div>
+
+  <div class="section">
+    <h2>4. Condiciones de Pago Cumplidas</h2>
+    <table>
+      <tr>
+        <th>Concepto</th>
+        <th>Monto</th>
+        <th>Estatus</th>
+      </tr>
+      <tr>
+        <td>50% Inicial (para inicio del proyecto)</td>
+        <td>$42.50</td>
+        <td><span class="badge">✓ Pagado</span></td>
+      </tr>
+      <tr>
+        <td>50% Contra Entrega</td>
+        <td>$42.50</td>
+        <td><span class="badge">✓ Pagado</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>5. Recursos y Activos Entregados</h2>
+    <ul>
+      <li><strong>Código fuente completo</strong> del sitio web (archivo <code>index.html</code> con HTML, CSS y JavaScript embebidos).</li>
+      <li><strong>Imágenes de productos</strong> en formato WebP (carpeta <code>products/</code>).</li>
+      <li><strong>Imágenes del sitio</strong> (fondo hero, footer) en carpeta <code>img/</code>.</li>
+      <li><strong>Favicon</strong> del sitio (<code>favicon.svg</code>).</li>
+      <li><strong>Repositorio GitHub</strong> alojado en <code>github.com/samsheybk2/elohim</code> para control de versiones y despliegue.</li>
+      <li><strong>Hosting estático</strong> desplegado y funcional.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>6. Declaración de Conformidad</h2>
+    <p>El cliente <strong>ELOHIM Fast Food</strong> declara haber recibido el proyecto descrito en el presente documento y verificó que el mismo cumple con los requerimientos y especificaciones pactados en la cotización <strong>COT-2026-001</strong>.</p>
+    <p style="margin-top:0.5rem;">En consecuencia, ambas partes dan por <strong>finalizada y saldada</strong> la relación contractual derivada de dicho proyecto, liberando a <strong>Gladiador Apps</strong> de toda responsabilidad sobre el mantenimiento futuro, actualizaciones o modificaciones del código una vez recibido y aceptado el producto final.</p>
+  </div>
+
+  <div class="signatures">
+    <div class="signature-box">
+      <div class="line"></div>
+      <label>Entregado por</label>
+      <div class="name">Samir Vasquez</div>
+      <div style="font-size:0.8rem;color:#888;">Gladiador Apps</div>
+    </div>
+    <div class="signature-box">
+      <div class="line"></div>
+      <label>Recibido por</label>
+      <div class="name">ELOHIM Fast Food</div>
+      <div style="font-size:0.8rem;color:#888;">Cliente</div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Documento generado el 07 de junio de 2026 &mdash; Gladiador Apps &copy; 2026
+  </div>
+</div>
+</body>
+</html>
