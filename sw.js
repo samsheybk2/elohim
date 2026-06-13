@@ -1,4 +1,4 @@
-const CACHE = 'elohim-v1';
+const CACHE = 'elohim-v2';
 const URLS = ['index.html', 'manifest.json', 'favicon.svg'];
 
 self.addEventListener('install', (e) => {
