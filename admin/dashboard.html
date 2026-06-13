@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - ELOHIM Fast Food</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0a0a0a; color: #fff;
+    }
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: #111; border-bottom: 1px solid #222;
+    }
+    .navbar h2 {
+      font-family: 'Bebas Neue','Impact',sans-serif;
+      font-size: 1.5rem; letter-spacing: 2px; color: #ff6b00;
+    }
+    .navbar h2 small { font-size: 0.8rem; color: #666; font-family: 'Segoe UI',sans-serif; }
+    .navbar .user-info { display: flex; align-items: center; gap: 1rem; }
+    .navbar .user-info span { color: #888; font-size: 0.85rem; }
+    .btn-logout {
+      padding: 0.4rem 1rem; background: transparent;
+      border: 1px solid #333; border-radius: 8px; color: #888;
+      cursor: pointer; font-size: 0.82rem; transition: all 0.3s;
+    }
+    .btn-logout:hover { border-color: #ff4500; color: #ff4500; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .header-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .header-actions h1 { font-size: 1.4rem; }
+    .btn-add {
+      padding: 0.6rem 1.2rem;
+      background: linear-gradient(135deg, #ff4500, #ff6b00);
+      border: none; border-radius: 10px; color: #fff;
+      font-weight: 600; cursor: pointer; font-size: 0.9rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    .btn-add:hover { transform: scale(1.03); box-shadow: 0 0 15px rgba(255,107,0,0.3); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th {
+      background: #151515; text-align: left; padding: 0.75rem 0.8rem;
+      color: #888; font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 1px; border-bottom: 2px solid #222;
+    }
+    td {
+      padding: 0.6rem 0.8rem; border-bottom: 1px solid #1a1a1a;
+      vertical-align: middle;
+    }
+    tr:hover td { background: #111; }
+    .product-img {
+      width: 48px; height: 48px; object-fit: cover;
+      border-radius: 8px; display: block;
+    }
+    .product-img-placeholder {
+      width: 48px; height: 48px; border-radius: 8px;
+      background: #1a1a1a; display: flex; align-items: center;
+      justify-content: center; color: #444; font-size: 1.2rem;
+    }
+    .badge { 
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 50px; font-size: 0.7rem; font-weight: 600;
+    }
+    .badge-active { background: #1b3d1b; color: #4caf50; }
+    .badge-inactive { background: #3d1b1b; color: #f44336; }
+    .badge-text { background: #ff6b0020; color: #ff6b00; }
+    .actions { display: flex; gap: 0.3rem; }
+    .btn-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      border: none; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 0.8rem; transition: all 0.2s;
+    }
+    .btn-icon.edit { background: #1a3a5c; color: #64b5f6; }
+    .btn-icon.edit:hover { background: #1e4d7a; }
+    .btn-icon.toggle { background: #1a2e1a; color: #4caf50; }
+    .btn-icon.toggle:hover { background: #1e3d1e; }
+    .btn-icon.delete { background: #3d1a1a; color: #f44336; }
+    .btn-icon.delete:hover { background: #5a1e1e; }
+    .btn-icon.photo { background: #2a2a1a; color: #ffeb3b; }
+    .btn-icon.photo:hover { background: #3d3d1e; }
+    .empty { text-align: center; padding: 3rem; color: #555; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.8); display: none;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #151515; border: 1px solid #222; border-radius: 16px;
+      padding: 2rem; max-width: 520px; width: 90%;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal h2 { font-size: 1.2rem; margin-bottom: 1.2rem; color: #ff6b00; }
+    .form-group { margin-bottom: 0.8rem; }
+    .form-group label {
+      display: block; font-size: 0.78rem; color: #888;
+      margin-bottom: 0.25rem; font-weight: 600;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: 0.6rem 0.8rem;
+      background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
+      color: #fff; font-size: 0.88rem; outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: #ff6b00; }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .modal-actions {
+      display: flex; gap: 0.8rem; margin-top: 1.2rem;
+    }
+    .modal-actions button {
+      flex: 1; padding: 0.7rem; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-save {
+      background: linear-gradient(135deg, #ff4500, #ff6b00);
+      border: none; color: #fff;
+    }
+    .btn-save:hover { transform: scale(1.02); }
+    .btn-cancel {
+      background: transparent; border: 1px solid #333; color: #888;
+    }
+    .btn-cancel:hover { border-color: #555; color: #fff; }
+    #modalMsg { font-size: 0.82rem; text-align: center; min-height: 1.2rem; margin-top: 0.5rem; }
+    .loading { text-align: center; padding: 2rem; color: #555; }
+
+    /* Toggle switch */
+    .toggle-switch { position: relative; display: inline-block; width: 36px; height: 20px; cursor: pointer; margin: 0 auto; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; background: #333; border-radius: 20px; transition: 0.3s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; left: 3px; bottom: 3px; width: 14px; height: 14px;
+      background: #fff; border-radius: 50%; transition: 0.3s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #ff6b00; }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+    /* Upload button */
+    .btn-upload {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.7rem 1rem; cursor: pointer;
+      background: rgba(255,255,255,0.08); border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px;
+      color: #aaa; font-size: 0.85rem; font-weight: 500; text-align: center;
+      transition: all 0.3s; margin-top: 0.3rem;
+    }
+    .btn-upload:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.35); color: #fff; }
+
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      table { font-size: 0.78rem; }
+      th, td { padding: 0.5rem 0.4rem; }
+      .product-img, .product-img-placeholder { width: 36px; height: 36px; }
+      .header-actions { flex-direction: column; gap: 0.8rem; align-items: stretch; }
+      .btn-add { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <h2>ELOHIM <small>· Admin</small></h2>
+    <div class="user-info">
+      <span id="userEmail"></span>
+      <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+      <a href="../index.html" class="btn-logout" style="text-decoration:none;" target="_blank"><i class="fas fa-external-link-alt"></i> Ver Sitio</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="header-actions">
+      <h1><i class="fas fa-burger"></i> Productos del Menú</h1>
+      <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> Nuevo Producto</button>
+    </div>
+    <div id="productsTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando productos...</div></div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h2 id="modalTitle">Nuevo Producto</h2>
+      <form id="productForm">
+        <div class="form-group">
+          <label for="prodName">Nombre *</label>
+          <input type="text" id="prodName" required>
+        </div>
+        <div class="form-group">
+          <label for="prodDesc">Descripción</label>
+          <textarea id="prodDesc"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prodPrice">Precio ($) *</label>
+            <input type="number" id="prodPrice" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="prodCategory">Categoría *</label>
+            <select id="prodCategory" required>
+              <option value="philly">Philly Cheesesteaks</option>
+              <option value="hamburguesas">Hamburguesas</option>
+              <option value="combos">Combos</option>
+              <option value="bebidas">Bebidas</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" style="grid-template-columns:auto 1fr 80px;">
+          <div class="form-group" style="display:flex;flex-direction:column;gap:0.3rem;">
+            <label style="white-space:nowrap;font-size:0.78rem;">Tipo</label>
+            <label class="toggle-switch" title="Alternar entre URL o archivo">
+              <input type="checkbox" id="imageMode">
+              <span class="toggle-slider"></span>
+            </label>
+            <span id="imageModeLabel" style="font-size:0.7rem;color:#888;text-align:center;">URL</span>
+          </div>
+          <div class="form-group">
+            <label for="prodImage">URL de Imagen</label>
+            <input type="text" id="prodImage" placeholder="products/nombre.webp">
+            <label for="prodImageFile" id="fileLabel" class="btn-upload" style="display:none;">
+              <i class="fas fa-cloud-upload-alt"></i> Seleccionar imagen
+              <input type="file" id="prodImageFile" accept="image/*" style="display:none;">
+            </label>
+          </div>
+          <div class="form-group" style="flex:0 0 80px;">
+            <div id="imagePreview" style="width:80px;height:80px;border-radius:8px;overflow:hidden;background:#1a1a1a;display:flex;align-items:center;justify-content:center;margin-top:1.2rem;">
+              <i class="fas fa-image" style="color:#444;font-size:1.5rem;"></i>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prodBadge">Badge (opcional)</label>
+            <input type="text" id="prodBadge" placeholder="Ej: Más vendido">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prodOrder">Orden</label>
+            <input type="number" id="prodOrder" value="0" min="0">
+          </div>
+          <div class="form-group">
+            <label for="prodActive">Estado</label>
+            <select id="prodActive">
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </select>
+          </div>
+        </div>
+        <div id="modalMsg"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn-save" id="btnSave">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ===== CONFIGURACIÓN SUPABASE =====
+    // ⚠️ REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO
+    const SUPABASE_URL = 'https://qxccqvdpltkirnxelctc.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4Y2NxdmRwbHRraXJueGVsY3RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTMzNTgsImV4cCI6MjA5Njg2OTM1OH0.pwYZjIR5GNuVk6NXRIuPFu5zFKU82qFANg0QNImrUwE';
+
+    // ===== AUTH CHECK =====
+    function checkAuth() {
+      const stored = localStorage.getItem('supabase.auth.token');
+      if (!stored) { window.location.href = 'login.html'; return; }
+      const session = JSON.parse(stored);
+      if (!session.access_token || new Date(session.expires_at * 1000) < new Date()) {
+        localStorage.removeItem('supabase.auth.token');
+        window.location.href = 'login.html';
+        return;
+      }
+      document.getElementById('userEmail').textContent = session.user?.email || 'Admin';
+    }
+
+    function getAuthHeaders() {
+      const stored = localStorage.getItem('supabase.auth.token');
+      if (!stored) return {};
+      const session = JSON.parse(stored);
+      return {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${session.access_token}`
+      };
+    }
+
+    // ===== LOAD PRODUCTS =====
+    async function loadProducts() {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=category.asc,sort_order.asc`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || ''}` }
+      });
+      if (!res.ok) { console.error('Error loading products', await res.text()); return; }
+      const data = await res.json();
+      products = data || [];
+      renderTable();
+    }
+
+    function renderTable() {
+      const container = document.getElementById('productsTable');
+      if (products.length === 0) {
+        container.innerHTML = '<div class="empty"><i class="fas fa-box-open" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>No hay productos aún. ¡Agrega el primero!</div>';
+        return;
+      }
+
+      let html = `<table>
+        <tr>
+          <th></th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Badge</th><th>Estado</th><th>Acciones</th>
+        </tr>`;
+      for (const p of products) {
+        const img = p.image_url
+          ? `<img src="${p.image_url.startsWith('http') ? p.image_url : '../' + p.image_url}" alt="${p.name}" class="product-img" loading="lazy">`
+          : `<div class="product-img-placeholder"><i class="fas fa-image"></i></div>`;
+        const badgeHtml = p.badge ? `<span class="badge badge-text">${p.badge}</span>` : '—';
+        const statusHtml = p.active
+          ? '<span class="badge badge-active">Activo</span>'
+          : '<span class="badge badge-inactive">Inactivo</span>';
+        html += `<tr>
+          <td>${img}</td>
+          <td><strong>${p.name}</strong></td>
+          <td>${p.category}</td>
+          <td>$${parseFloat(p.price).toFixed(2)}</td>
+          <td>${badgeHtml}</td>
+          <td>${statusHtml}</td>
+          <td class="actions">
+            <button class="btn-icon edit" onclick="editProduct(${p.id})" title="Editar"><i class="fas fa-pen"></i></button>
+            <button class="btn-icon toggle" onclick="toggleActive(${p.id})" title="${p.active ? 'Desactivar' : 'Activar'}">
+              <i class="fas ${p.active ? 'fa-eye-slash' : 'fa-eye'}"></i>
+            </button>
+            <button class="btn-icon delete" onclick="deleteProduct(${p.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>`;
+      }
+      html += '</table>';
+      container.innerHTML = html;
+    }
+
+    // ===== CRUD OPERATIONS =====
+    function updatePreview(url) {
+      const preview = document.getElementById('imagePreview');
+      if (url) {
+        const src = url.startsWith('http') ? url : `../${url}`;
+        preview.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-image\\' style=\\'color:#444;font-size:1.5rem;\\'></i>'">`;
+      } else {
+        preview.innerHTML = '<i class="fas fa-image" style="color:#444;font-size:1.5rem;"></i>';
+      }
+    }
+
+    function openModal(product = null) {
+      editingId = product ? product.id : null;
+      document.getElementById('modalTitle').textContent = product ? 'Editar Producto' : 'Nuevo Producto';
+      document.getElementById('prodName').value = product ? product.name : '';
+      document.getElementById('prodDesc').value = product ? (product.description || '') : '';
+      document.getElementById('prodPrice').value = product ? product.price : '';
+      document.getElementById('prodCategory').value = product ? product.category : 'philly';
+      document.getElementById('prodImage').value = product ? (product.image_url || '') : '';
+      document.getElementById('prodBadge').value = product ? (product.badge || '') : '';
+      document.getElementById('prodOrder').value = product ? product.sort_order : 0;
+      document.getElementById('prodActive').value = product ? (product.active ? 'true' : 'false') : 'true';
+      document.getElementById('modalMsg').textContent = '';
+      document.getElementById('btnSave').textContent = product ? 'Guardar Cambios' : 'Crear Producto';
+      document.getElementById('prodImageFile').value = '';
+      document.getElementById('imageMode').checked = false;
+      document.getElementById('imageModeLabel').textContent = 'URL';
+      document.getElementById('prodImage').style.display = '';
+      document.getElementById('prodImageFile').style.display = 'none';
+      document.getElementById('fileLabel').style.display = 'none';
+      updatePreview(product ? product.image_url : '');
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      editingId = null;
+    }
+
+    // Image mode toggle
+    document.getElementById('imageMode').addEventListener('change', (e) => {
+      const isFile = e.target.checked;
+      document.getElementById('imageModeLabel').textContent = isFile ? 'Archivo' : 'URL';
+      document.getElementById('prodImage').style.display = isFile ? 'none' : '';
+      document.getElementById('prodImageFile').style.display = isFile ? '' : 'none';
+      document.getElementById('fileLabel').style.display = isFile ? '' : 'none';
+    });
+
+    // Image URL preview
+    document.getElementById('prodImage').addEventListener('input', (e) => {
+      updatePreview(e.target.value);
+    });
+
+    // File upload
+    document.getElementById('prodImageFile').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const msg = document.getElementById('modalMsg');
+      const oldText = msg.textContent;
+      const oldColor = msg.style.color;
+      msg.textContent = 'Subiendo imagen...';
+      msg.style.color = '#ff6b00';
+
+      try {
+        const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || '';
+        const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const res = await fetch(`${SUPABASE_URL}/storage/v1/object/products/${fileName}`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': file.type || 'application/octet-stream'
+          },
+          body: file
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(errText || 'Error al subir');
+        }
+
+        const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/products/${fileName}`;
+        document.getElementById('prodImage').value = publicUrl;
+        updatePreview(publicUrl);
+        msg.textContent = 'Imagen subida correctamente.';
+        msg.style.color = '#4caf50';
+      } catch (err) {
+        msg.textContent = 'Error al subir imagen: ' + err.message + ' (asegúrate de crear el bucket "products" en Supabase Storage)';
+        msg.style.color = '#ff4500';
+      }
+    });
+
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('modalMsg');
+      const btn = document.getElementById('btnSave');
+      btn.disabled = true;
+      btn.textContent = 'Guardando...';
+      msg.textContent = '';
+
+      const data = {
+        name: document.getElementById('prodName').value.trim(),
+        description: document.getElementById('prodDesc').value.trim(),
+        price: parseFloat(document.getElementById('prodPrice').value),
+        category: document.getElementById('prodCategory').value,
+        image_url: document.getElementById('prodImage').value.trim(),
+        badge: document.getElementById('prodBadge').value.trim() || null,
+        sort_order: parseInt(document.getElementById('prodOrder').value) || 0,
+        active: document.getElementById('prodActive').value === 'true'
+      };
+
+      const headers = {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || ''}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      };
+
+      let res;
+      if (editingId) {
+        res = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${editingId}`, {
+          method: 'PATCH', headers, body: JSON.stringify(data)
+        });
+      } else {
+        res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {
+          method: 'POST', headers, body: JSON.stringify(data)
+        });
+      }
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        msg.textContent = 'Error: ' + (err.message || res.statusText);
+        msg.style.color = '#ff4500';
+      } else {
+        msg.textContent = editingId ? 'Producto actualizado correctamente.' : 'Producto creado correctamente.';
+        msg.style.color = '#4caf50';
+        setTimeout(() => { closeModal(); loadProducts(); }, 600);
+      }
+      btn.disabled = false;
+      btn.textContent = editingId ? 'Guardar Cambios' : 'Crear Producto';
+    });
+
+    function editProduct(id) {
+      const p = products.find(x => x.id === id);
+      if (p) openModal(p);
+    }
+
+    async function toggleActive(id) {
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || '';
+      await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: !p.active })
+      });
+      loadProducts();
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('¿Eliminar este producto permanentemente?')) return;
+      const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || '';
+      await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
+      });
+      loadProducts();
+    }
+
+    function logout() {
+      localStorage.removeItem('supabase.auth.token');
+      window.location.href = 'login.html';
+    }
+
+    // Close modal on overlay click
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    // Escape to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // ===== INIT =====
+    checkAuth();
+    loadProducts();
+  </script>
+</body>
+</html>

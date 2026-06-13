@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crear Admin - ELOHIM</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0a0a; color: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .card { background: #111; border: 1px solid #222; border-radius: 16px; padding: 2rem; max-width: 400px; width: 90%; text-align: center; }
+  h1 { color: #ff6b00; font-size: 1.3rem; margin-bottom: 0.5rem; }
+  p { color: #888; font-size: 0.85rem; margin-bottom: 1.5rem; }
+  .btn { padding: 0.7rem 1.5rem; background: linear-gradient(135deg, #ff4500, #ff6b00); border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; font-size: 1rem; transition: transform 0.2s, box-shadow 0.3s; }
+  .btn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(255,107,0,0.3); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  #msg { margin-top: 1rem; font-size: 0.85rem; min-height: 1.5rem; padding: 0.5rem; border-radius: 8px; }
+  .success { background: #1b3d1b; color: #4caf50; }
+  .error { background: #3d1b1b; color: #f44336; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Crear Administrador</h1>
+  <p>Se crear&aacute; el usuario <strong>elohim.admin@gmail.com</strong> con contrase&ntilde;a <strong>Philly2026!</strong></p>
+  <button class="btn" id="createBtn">Crear Admin</button>
+  <div id="msg"></div>
+</div>
+<script>
+  const SUPABASE_URL = 'https://qxccqvdpltkirnxelctc.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4Y2NxdmRwbHRraXJueGVsY3RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTMzNTgsImV4cCI6MjA5Njg2OTM1OH0.pwYZjIR5GNuVk6NXRIuPFu5zFKU82qFANg0QNImrUwE';
+
+  document.getElementById('createBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('createBtn');
+    const msg = document.getElementById('msg');
+    btn.disabled = true;
+    btn.textContent = 'Creando...';
+    msg.className = '';
+    msg.textContent = '';
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'elohim.admin@gmail.com', password: 'Philly2026!', data: { role: 'admin' } })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.msg && data.msg.includes('already')) {
+          msg.className = 'success';
+          msg.textContent = 'El usuario ya existe. Ve al login.';
+        } else {
+          msg.className = 'error';
+          msg.textContent = 'Error: ' + (data.msg || data.error_description || res.statusText);
+        }
+      } else {
+        msg.className = 'success';
+        msg.textContent = 'Usuario creado exitosamente.';
+      }
+    } catch (err) {
+      msg.className = 'error';
+      msg.textContent = 'Error de conexi\u00f3n: ' + err.message;
+    }
+    btn.disabled = false;
+    btn.textContent = 'Crear Admin';
+  });
+</script>
+</body>
+</html>

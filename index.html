@@ -11,23 +11,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ELOHIM">
   <meta name="theme-color" content="#0a0a0a">
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <style>
-    /* ===== WATERMARK ===== */
-    #watermark {
-      position: fixed; inset: 0; z-index: 10000;
-      display: flex; align-items: center; justify-content: center;
-      pointer-events: none;
-    }
-    #watermark img {
-      width: min(80vw, 800px); height: auto;
-      opacity: 0.1;
-      filter: brightness(0) invert(1);
-    }
-
-    /* ===== WATERMARK ===== */
-    #watermark {
-      position: fixed; inset: 0; z-index: 10000;  </style>
+    /* ===== WATERMARK (removed) ===== */</style>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -999,9 +986,6 @@
 </head>
 <body>
 
-  <!-- ===== WATERMARK ===== -->
-  <div id="watermark"><img src="https://amieluzbody.vercel.app/logo.svg" alt="Gladiador Apps"></div>
-
   <!-- ===== NAVBAR ===== -->
   <header class="navbar" id="navbar">
     <a href="#hero" class="logo">
@@ -1207,141 +1191,49 @@
     // 👇 CONFIGURA AQUÍ TU NÚMERO DE WHATSAPP (código de país + número)
     //    Ejemplo: '584243646260' (formato internacional sin +)
 
+    // ===== CONFIGURACIÓN SUPABASE =====
+    // ⚠️ REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO
+    const SUPABASE_URL = 'https://qxccqvdpltkirnxelctc.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4Y2NxdmRwbHRraXJueGVsY3RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTMzNTgsImV4cCI6MjA5Njg2OTM1OH0.pwYZjIR5GNuVk6NXRIuPFu5zFKU82qFANg0QNImrUwE';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const whatsappNumber = '584243646260';
 
+    // ===== CATEGORY ICONS =====
+    const categoryIcons = {
+      philly: 'fa-drumstick-bite',
+      hamburguesas: 'fa-burger',
+      combos: 'fa-bullseye',
+      bebidas: 'fa-wine-glass'
+    };
+
     // ===== MENU DATA =====
-    const menuData = [
-      // -- Philly Cheesesteaks --
-      {
-        id: 1,
-        name: 'Philly Clásico',
-        desc: 'Carne de res, queso provolone, cebolla y pimientos salteados.',
-        price: 10.00,
-        category: 'philly',
-        image: 'products/Philly Clásico.webp',
-        badge: 'Más vendido'
-      },
-      {
-        id: 2,
-        name: 'Philly con Champiñones',
-        desc: 'Philly clásico bañado en salsa de champiñones y hongos salteados.',
-        price: 12.00,
-        category: 'philly',
-        image: 'products/Philly con Champiñones.webp',
-        badge: null
-      },
-      {
-        id: 3,
-        name: 'Philly BBQ',
-        desc: 'Carne, queso cheddar, cebolla caramelizada y salsa BBQ ahumada.',
-        price: 11.00,
-        category: 'philly',
-        image: 'products/Philly BBQ.webp',
-        badge: 'BBQ'
-      },
-      {
-        id: 4,
-        name: 'Philly Supremo',
-        desc: 'Doble carne, doble queso, jalapeños, tocineta y salsa especial.',
-        price: 14.00,
-        category: 'philly',
-        image: 'products/Philly Supremo.webp',
-        badge: 'Supremo'
-      },
-      // -- Hamburguesas --
-      {
-        id: 5,
-        name: 'Hamburguesa Clásica',
-        desc: 'Carne 150g, lechuga, tomate, cebolla y nuestra salsa especial.',
-        price: 8.00,
-        category: 'hamburguesas',
-        image: 'products/Hamburguesa Clásica.webp',
-        badge: null
-      },
-      {
-        id: 6,
-        name: 'BBQ Bacon',
-        desc: 'Carne 150g, queso cheddar, tocineta crujiente y salsa BBQ.',
-        price: 10.00,
-        category: 'hamburguesas',
-        image: 'products/BBQ Bacon.webp',
-        badge: null
-      },
-      {
-        id: 7,
-        name: 'Doble Carne',
-        desc: 'Dos carnes 150g, doble queso, pepinillos, cebolla y aderezo.',
-        price: 12.00,
-        category: 'hamburguesas',
-        image: 'products/Doble Carne.webp',
-        badge: null
-      },
-      // -- Combos --
-      {
-        id: 8,
-        name: 'Combo Philly',
-        desc: 'Philly Clásico + Papas fritas + Bebida 16oz.',
-        price: 15.00,
-        category: 'combos',
-        image: 'products/Combo Philly.webp',
-        badge: 'Ahorras $3'
-      },
-      {
-        id: 9,
-        name: 'Combo Hamburguesa',
-        desc: 'Hamburguesa Clásica + Papas + Bebida 16oz.',
-        price: 13.00,
-        category: 'combos',
-        image: 'products/Combo Hamburguesa.webp',
-        badge: null
-      },
-      {
-        id: 10,
-        name: 'Combo Pareja',
-        desc: '2 Philly Clásicos + 2 Papas grandes + 2 Bebidas 20oz.',
-        price: 25.00,
-        category: 'combos',
-        image: 'products/Combo Pareja.webp',
-        badge: 'Para 2'
-      },
-      // -- Bebidas --
-      {
-        id: 11,
-        name: 'Coca-Cola',
-        desc: 'Lata 355ml o botella 500ml.',
-        price: 2.00,
-        category: 'bebidas',
-        image: 'products/Coca-Cola.webp',
-        badge: null
-      },
-      {
-        id: 12,
-        name: 'Sprite',
-        desc: 'Lata 355ml o botella 500ml.',
-        price: 2.00,
-        category: 'bebidas',
-        image: 'products/Sprite.webp',
-        badge: null
-      },
-      {
-        id: 13,
-        name: 'Jugo Natural',
-        desc: 'Parchita, naranja o limonada. Preparado al momento.',
-        price: 3.00,
-        category: 'bebidas',
-        image: 'products/Jugo Natural.webp',
-        badge: null
-      },
-      {
-        id: 14,
-        name: 'Agua',
-        desc: 'Botella de agua mineral 500ml.',
-        price: 1.50,
-        category: 'bebidas',
-        image: 'products/Agua.webp',
-        badge: null
-      }
-    ];
+    let menuData = [];
+
+    async function loadMenuData() {
+      const { data, error } = await sb
+        .from('products')
+        .select('*')
+        .eq('active', true)
+        .order('category')
+        .order('sort_order');
+
+      if (error) { console.error('Error loading products:', error); return; }
+      if (!data) { return; }
+
+      menuData = data.map(p => ({
+        id: p.id,
+        name: p.name,
+        desc: p.description,
+        price: parseFloat(p.price),
+        category: p.category,
+        image: p.image_url || null,
+        icon: categoryIcons[p.category] || 'fa-fire',
+        badge: p.badge || null,
+        sort_order: p.sort_order
+      }));
+      renderMenu(activeCategory);
+    }
 
     // ===== STATE =====
     let cart = [];
@@ -1763,9 +1655,9 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // ===== INIT =====
-    renderMenu();
     updateCartUI();
     initEmbers();
+    loadMenuData();
 
     // ===== SERVICE WORKER (PWA) =====
     if ('serviceWorker' in navigator) {
