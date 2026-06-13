@@ -866,14 +866,19 @@
       border-radius: 12px;
     }
     .footer-map {
-      border-radius: 12px;
-      overflow: hidden;
+      border-radius: 12px; overflow: hidden;
     }
     .footer-map iframe {
-      width: 100%;
-      height: 220px;
-      border: none;
+      width: 100%; height: 220px; border: none;
     }
+    .btn-directions {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.35rem 0.7rem;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px; color: #ff6b00; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all 0.3s; white-space: nowrap;
+    }
+    .btn-directions:hover { background: rgba(255,107,0,0.12); border-color: #ff6b00; }
     .footer-bottom {
       text-align: center;
       padding-top: 1.5rem;
@@ -1156,15 +1161,19 @@
           </p>
         </div>
 
-        <div class="footer-map">
-          <h4 style="padding:0 0 0.5rem 0;"><i class="fas fa-map-location-dot"></i> Ubicación</h4>
-          <!-- Reemplaza el src con el embed de tu dirección real -->
+        <div>
+          <h4 style="padding:0 0 0.5rem 0;display:flex;align-items:center;gap:0.6rem;">
+            <span><i class="fas fa-map-location-dot"></i> Ubicaci&oacute;n</span>
+            <button class="btn-directions" onclick="openDirections()"><i class="fas fa-location-arrow"></i> Llévame</button>
+          </h4>
+          <div class="footer-map">
           <iframe style="border:0;"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.5!2d-67.5!3d10.2!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e803e5e2e0a0a0b%3A0x0!2zU2FudGEgUml0YSwgQXJhZ3VhLCBWZW5lenVlbGE!5e0!3m2!1ses!2sve!4v1"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
-            title="Ubicación de ELOHIM FAST FOOD"
+            title="Ubicaci\u00f3n de ELOHIM FAST FOOD"
           ></iframe>
+          </div>
         </div>
       </div>
       <div class="footer-bottom">
@@ -1456,6 +1465,24 @@
       );
     }
 
+    function openDirections() {
+      const dest = 'Santa+Rita+Aragua+Venezuela';
+      if (!navigator.geolocation) {
+        window.open(`https://www.google.com/maps/dir//${dest}`, '_blank');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const from = `${pos.coords.latitude},${pos.coords.longitude}`;
+          window.open(`https://www.google.com/maps/dir/${from}/${dest}`, '_blank');
+        },
+        () => {
+          window.open(`https://www.google.com/maps/dir//${dest}`, '_blank');
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
     // ===== FORM EVENT LISTENERS =====
     document.getElementById('customerName').addEventListener('input', updateWhatsAppButton);
     document.getElementById('customerAddress').addEventListener('input', updateWhatsAppButton);
@@ -1505,8 +1532,6 @@
         `\u{1F64F} Gracias, quedo a la espera.`;
 
       const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-
-      const url = `https://wa.me/${whatsappNumber}?text=${message}`;
 
       // Open WhatsApp
       window.open(url, '_blank');
