@@ -11,7 +11,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ELOHIM">
   <meta name="theme-color" content="#0a0a0a">
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <style>
     /* ===== WATERMARK (removed) ===== */</style>
@@ -1195,8 +1194,6 @@
     // ⚠️ REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO
     const SUPABASE_URL = 'https://qxccqvdpltkirnxelctc.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4Y2NxdmRwbHRraXJueGVsY3RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTMzNTgsImV4cCI6MjA5Njg2OTM1OH0.pwYZjIR5GNuVk6NXRIuPFu5zFKU82qFANg0QNImrUwE';
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     const whatsappNumber = '584243646260';
 
     // ===== CATEGORY ICONS =====
@@ -1211,15 +1208,18 @@
     let menuData = [];
 
     async function loadMenuData() {
-      const { data, error } = await sb
-        .from('products')
-        .select('*')
-        .eq('active', true)
-        .order('category')
-        .order('sort_order');
-
-      if (error) { console.error('Error loading products:', error); return; }
-      if (!data) { return; }
+      let data;
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&active=eq.true&order=category.asc,sort_order.asc`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY }
+        });
+        if (!res.ok) throw new Error(await res.text());
+        data = await res.json();
+      } catch (err) {
+        console.error('Error loading products:', err);
+        return;
+      }
+      if (!data) return;
 
       menuData = data.map(p => ({
         id: p.id,
