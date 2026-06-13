@@ -58,7 +58,9 @@ CREATE POLICY "Admins pueden insertar productos"
   ON products FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 CREATE POLICY "Admins pueden actualizar productos"
-  ON products FOR UPDATE USING (auth.role() = 'authenticated');
+  ON products FOR UPDATE
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
 
 CREATE POLICY "Admins pueden eliminar productos"
   ON products FOR DELETE USING (auth.role() = 'authenticated');

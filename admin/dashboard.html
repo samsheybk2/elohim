@@ -168,6 +168,46 @@
     }
     .btn-upload:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.35); color: #fff; }
 
+    /* Delete confirm modal */
+    .delete-modal { text-align: center; padding: 2rem; }
+    .delete-modal .trash-icon {
+      font-size: 3rem; color: #f44336; margin-bottom: 1rem; display: inline-block;
+      animation: trashShake 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes trashShake {
+      0% { transform: rotate(-8deg); }
+      100% { transform: rotate(8deg); }
+    }
+    .delete-modal .trash-icon.deleting { animation: trashOpen 0.6s ease forwards; }
+    @keyframes trashOpen {
+      0% { transform: rotate(0) scale(1); opacity: 1; }
+      50% { transform: rotate(-20deg) scale(1.2); opacity: 0.5; }
+      100% { transform: rotate(0) scale(0); opacity: 0; }
+    }
+    .delete-modal .check-icon {
+      font-size: 4rem; color: #4caf50; display: none; margin-bottom: 1rem;
+      animation: checkPop 0.5s ease;
+    }
+    .delete-modal .check-icon.show { display: inline-block; }
+    @keyframes checkPop {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.3); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .delete-modal h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: #fff; }
+    .delete-modal p { font-size: 0.85rem; color: #888; margin-bottom: 1.5rem; }
+    .delete-modal .product-name { color: #ff6b00; font-weight: 600; }
+    .delete-actions { display: flex; gap: 0.8rem; justify-content: center; }
+    .delete-actions button {
+      padding: 0.6rem 1.5rem; border-radius: 10px; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+    }
+    .btn-cancel-del { background: #222; color: #888; }
+    .btn-cancel-del:hover { background: #333; color: #fff; }
+    .btn-confirm-del { background: #f44336; color: #fff; }
+    .btn-confirm-del:hover { background: #d32f2f; transform: scale(1.02); }
+    .btn-confirm-del:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
     @media (max-width: 768px) {
       .container { padding: 1rem; }
       table { display: none; }
@@ -192,6 +232,56 @@
     .product-card-body .meta { font-size: 0.72rem; color: #888; display: flex; gap: 0.5rem; flex-wrap: wrap; }
     .product-card-body .price { color: #ff6b00; font-weight: 700; font-size: 0.8rem; }
     .product-card-actions { display: flex; gap: 0.3rem; flex-shrink: 0; }
+
+    /* Theme toggle */
+    .theme-toggle {
+      background: none; border: none; color: #ff6b00;
+      font-size: 1.1rem; padding: 0.3rem; cursor: pointer;
+      transition: transform 0.3s; display: inline-flex;
+      align-items: center; justify-content: center;
+    }
+    .theme-toggle:hover { transform: rotate(30deg); }
+
+    [data-theme="light"] body { background: #f5f5f5; color: #1a1a1a; }
+    [data-theme="light"] .navbar { background: #fff; border-bottom-color: #e0e0e0; }
+    [data-theme="light"] .navbar h2 small { color: #999; }
+    [data-theme="light"] .btn-logout { border-color: #ccc; color: #666; }
+    [data-theme="light"] .btn-logout:hover { border-color: #ff4500; color: #ff4500; }
+    [data-theme="light"] .header-actions h1 { color: #1a1a1a; }
+    [data-theme="light"] th { background: #e8e8e8; color: #666; border-bottom-color: #ccc; }
+    [data-theme="light"] td { border-bottom-color: #e0e0e0; color: #333; }
+    [data-theme="light"] tr:hover td { background: #f5f5f5; }
+    [data-theme="light"] .product-img-placeholder { background: #e0e0e0; color: #999; }
+    [data-theme="light"] .modal { background: #fff; border-color: #e0e0e0; }
+    [data-theme="light"] .modal h2 { color: #ff6b00; }
+    [data-theme="light"] .form-group label { color: #555; }
+    [data-theme="light"] .form-group input,
+    [data-theme="light"] .form-group select,
+    [data-theme="light"] .form-group textarea { background: #fff; border-color: #ccc; color: #333; }
+    [data-theme="light"] .form-group select option { background: #fff; }
+    [data-theme="light"] .btn-cancel { border-color: #ccc; color: #888; }
+    [data-theme="light"] .btn-cancel:hover { border-color: #999; color: #333; }
+    [data-theme="light"] .loading { color: #999; }
+    [data-theme="light"] .product-card { background: #fff; border-color: #e0e0e0; }
+    [data-theme="light"] .product-card-body h4 { color: #1a1a1a; }
+    [data-theme="light"] .product-card-body .meta { color: #888; }
+    [data-theme="light"] .admin-nav-overlay { background: #fff; border-color: #e0e0e0; }
+    [data-theme="light"] .admin-nav-overlay a,
+    [data-theme="light"] .admin-nav-overlay button { color: #555; }
+    [data-theme="light"] .admin-nav-overlay a:hover,
+    [data-theme="light"] .admin-nav-overlay button:hover { background: #f0f0f0; color: #1a1a1a; }
+    [data-theme="light"] .admin-nav-overlay span { color: #999; }
+    [data-theme="light"] .delete-modal h3 { color: #1a1a1a; }
+    [data-theme="light"] .delete-modal p { color: #666; }
+    [data-theme="light"] .modal-overlay { background: rgba(0,0,0,0.5); }
+    [data-theme="light"] .btn-icon.edit { background: #e3f2fd; color: #1976d2; }
+    [data-theme="light"] .btn-icon.edit:hover { background: #bbdefb; }
+    [data-theme="light"] .btn-icon.toggle { background: #e8f5e9; color: #388e3c; }
+    [data-theme="light"] .btn-icon.toggle:hover { background: #c8e6c9; }
+    [data-theme="light"] .btn-icon.delete { background: #fce4ec; color: #d32f2f; }
+    [data-theme="light"] .btn-icon.delete:hover { background: #f8bbd0; }
+    [data-theme="light"] .btn-icon.photo { background: #fff8e1; color: #f57f17; }
+    [data-theme="light"] .btn-icon.photo:hover { background: #ffecb3; }
 
     /* Admin mobile nav */
     .admin-menu-toggle { display: none; background: none; border: none; color: #888; font-size: 1.3rem; cursor: pointer; padding: 0.3rem; }
@@ -218,16 +308,6 @@
       .navbar .user-info { display: none; }
       .admin-menu-toggle { display: block; }
     }
-    .product-card-img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
-    .product-card-img-placeholder {
-      width: 48px; height: 48px; border-radius: 8px; background: #1a1a1a;
-      display: flex; align-items: center; justify-content: center; color: #444; flex-shrink: 0;
-    }
-    .product-card-body { flex: 1; min-width: 0; }
-    .product-card-body h4 { font-size: 0.85rem; margin-bottom: 0.15rem; }
-    .product-card-body .meta { font-size: 0.72rem; color: #888; display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .product-card-body .price { color: #ff6b00; font-weight: 700; font-size: 0.8rem; }
-    .product-card-actions { display: flex; gap: 0.3rem; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -235,6 +315,7 @@
     <h2>ELOHIM <small>· Admin</small></h2>
     <div class="user-info">
       <span id="userEmail"></span>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema" title="Cambiar tema"><i class="fas fa-sun"></i></button>
       <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
       <a href="../index.html" class="btn-logout" style="text-decoration:none;" target="_blank"><i class="fas fa-external-link-alt"></i> Ver Sitio</a>
     </div>
@@ -330,6 +411,22 @@
           <button type="submit" class="btn-save" id="btnSave">Guardar</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal-overlay" id="deleteOverlay">
+    <div class="modal" style="max-width:380px;">
+      <div class="delete-modal">
+        <div class="trash-icon" id="trashIcon"><i class="fas fa-trash-can"></i></div>
+        <div class="check-icon" id="checkIcon"><i class="fas fa-check-circle"></i></div>
+        <h3>¿Eliminar producto?</h3>
+        <p>Esta acción no se puede deshacer.<br>Se eliminará <span class="product-name" id="deleteProductName"></span> permanentemente.</p>
+        <div class="delete-actions" id="deleteActions">
+          <button class="btn-cancel-del" onclick="closeDeleteModal()">Cancelar</button>
+          <button class="btn-confirm-del" id="btnConfirmDel" onclick="confirmDelete()">Eliminar</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -599,22 +696,74 @@
       const p = products.find(x => x.id === id);
       if (!p) return;
       const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || '';
-      await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+      if (!token) { alert('Sesión expirada. Inicia sesión de nuevo.'); return; }
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
         method: 'PATCH',
-        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify({ active: !p.active })
       });
+      if (!res.ok) {
+        const err = await res.text();
+        console.error('Toggle error:', err);
+        alert('Error al cambiar estado. Revisa la consola.');
+        return;
+      }
       loadProducts();
     }
 
     async function deleteProduct(id) {
-      if (!confirm('¿Eliminar este producto permanentemente?')) return;
+      deletingId = id;
+      const p = products.find(x => x.id === id);
+      document.getElementById('deleteProductName').textContent = p ? p.name : '';
+      document.getElementById('trashIcon').style.display = 'inline-block';
+      document.getElementById('trashIcon').classList.remove('deleting');
+      document.getElementById('checkIcon').classList.remove('show');
+      document.getElementById('deleteActions').style.display = 'flex';
+      document.getElementById('btnConfirmDel').disabled = false;
+      document.getElementById('btnConfirmDel').textContent = 'Eliminar';
+      document.getElementById('btnConfirmDel').style.display = '';
+      document.getElementById('deleteOverlay').classList.add('open');
+    }
+
+    let deletingId = null;
+
+    function closeDeleteModal() {
+      document.getElementById('deleteOverlay').classList.remove('open');
+      deletingId = null;
+    }
+
+    async function confirmDelete() {
+      if (!deletingId) return;
       const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || '';
-      await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
-        method: 'DELETE',
-        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-      });
-      loadProducts();
+      if (!token) { alert('Sesi\u00f3n expirada. Inicia sesi\u00f3n de nuevo.'); return; }
+
+      // Animation: trash opens, check appears
+      const trash = document.getElementById('trashIcon');
+      const check = document.getElementById('checkIcon');
+      const actions = document.getElementById('deleteActions');
+      const btn = document.getElementById('btnConfirmDel');
+
+      trash.classList.add('deleting');
+      btn.disabled = true;
+      btn.textContent = 'Eliminando...';
+
+      setTimeout(async () => {
+        trash.style.display = 'none';
+        check.classList.add('show');
+        actions.style.display = 'none';
+
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${deletingId}`, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) { console.error('Delete error:', await res.text()); alert('Error al eliminar'); }
+
+        setTimeout(() => {
+          closeDeleteModal();
+          loadProducts();
+        }, 800);
+      }, 600);
     }
 
     function logout() {
@@ -645,6 +794,24 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeModal();
     });
+
+    // ===== THEME TOGGLE =====
+    function toggleTheme() {
+      const html = document.documentElement;
+      const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      document.querySelectorAll('.theme-toggle i').forEach(el => {
+        el.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+      });
+    }
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      document.querySelectorAll('.theme-toggle i').forEach(el => {
+        el.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+      });
+    }
 
     // ===== INIT =====
     checkAuth();
