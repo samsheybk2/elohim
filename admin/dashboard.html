@@ -166,12 +166,64 @@
 
     @media (max-width: 768px) {
       .container { padding: 1rem; }
-      table { font-size: 0.78rem; }
-      th, td { padding: 0.5rem 0.4rem; }
-      .product-img, .product-img-placeholder { width: 36px; height: 36px; }
+      table { display: none; }
+      .product-img, .product-img-placeholder { width: 48px; height: 48px; }
       .header-actions { flex-direction: column; gap: 0.8rem; align-items: stretch; }
       .btn-add { justify-content: center; }
+      .product-cards { display: flex !important; }
     }
+    .product-cards { display: none; flex-direction: column; gap: 0.8rem; }
+    .product-card {
+      background: #111; border: 1px solid #222; border-radius: 12px;
+      padding: 0.8rem; display: flex; align-items: center; gap: 0.8rem;
+      max-width: 100%; box-sizing: border-box;
+    }
+    .product-card-img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+    .product-card-img-placeholder {
+      width: 48px; height: 48px; border-radius: 8px; background: #1a1a1a;
+      display: flex; align-items: center; justify-content: center; color: #444; flex-shrink: 0;
+    }
+    .product-card-body { flex: 1; min-width: 0; overflow: hidden; }
+    .product-card-body h4 { font-size: 0.85rem; margin-bottom: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-card-body .meta { font-size: 0.72rem; color: #888; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .product-card-body .price { color: #ff6b00; font-weight: 700; font-size: 0.8rem; }
+    .product-card-actions { display: flex; gap: 0.3rem; flex-shrink: 0; }
+
+    /* Admin mobile nav */
+    .admin-menu-toggle { display: none; background: none; border: none; color: #888; font-size: 1.3rem; cursor: pointer; padding: 0.3rem; }
+    .admin-nav-overlay {
+      position: fixed; top: 60px; right: 1rem; z-index: 999;
+      background: #151515; border: 1px solid #222; border-radius: 12px;
+      padding: 0.5rem; min-width: 200px;
+      display: none; flex-direction: column;
+    }
+    .admin-nav-overlay.open { display: flex; }
+    .admin-nav-overlay a, .admin-nav-overlay button {
+      padding: 0.6rem 0.8rem; background: none; border: none; color: #ccc;
+      font-size: 0.85rem; cursor: pointer; text-align: left; border-radius: 8px;
+      transition: background 0.2s; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .admin-nav-overlay a:hover, .admin-nav-overlay button:hover { background: #222; color: #fff; }
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      table { display: none; }
+      .product-img, .product-img-placeholder { width: 48px; height: 48px; }
+      .header-actions { flex-direction: column; gap: 0.8rem; align-items: stretch; }
+      .btn-add { justify-content: center; }
+      .product-cards { display: flex !important; }
+      .navbar .user-info { display: none; }
+      .admin-menu-toggle { display: block; }
+    }
+    .product-card-img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+    .product-card-img-placeholder {
+      width: 48px; height: 48px; border-radius: 8px; background: #1a1a1a;
+      display: flex; align-items: center; justify-content: center; color: #444; flex-shrink: 0;
+    }
+    .product-card-body { flex: 1; min-width: 0; }
+    .product-card-body h4 { font-size: 0.85rem; margin-bottom: 0.15rem; }
+    .product-card-body .meta { font-size: 0.72rem; color: #888; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .product-card-body .price { color: #ff6b00; font-weight: 700; font-size: 0.8rem; }
+    .product-card-actions { display: flex; gap: 0.3rem; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -181,6 +233,12 @@
       <span id="userEmail"></span>
       <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
       <a href="../index.html" class="btn-logout" style="text-decoration:none;" target="_blank"><i class="fas fa-external-link-alt"></i> Ver Sitio</a>
+    </div>
+    <button class="admin-menu-toggle" onclick="toggleAdminNav()" aria-label="Menú"><i class="fas fa-bars"></i></button>
+    <div class="admin-nav-overlay" id="adminNavOverlay">
+      <span style="padding:0.6rem 0.8rem;color:#666;font-size:0.78rem;" id="adminNavEmail"></span>
+      <a href="../index.html" target="_blank"><i class="fas fa-external-link-alt"></i> Ver Sitio</a>
+      <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
     </div>
   </nav>
 
@@ -287,7 +345,9 @@
         window.location.href = 'login.html';
         return;
       }
-      document.getElementById('userEmail').textContent = session.user?.email || 'Admin';
+      const email = session.user?.email || 'Admin';
+      document.getElementById('userEmail').textContent = email;
+      document.getElementById('adminNavEmail').textContent = email;
     }
 
     function getAuthHeaders() {
@@ -318,6 +378,7 @@
         return;
       }
 
+      // Desktop table
       let html = `<table>
         <tr>
           <th></th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Badge</th><th>Estado</th><th>Acciones</th>
@@ -347,6 +408,39 @@
         </tr>`;
       }
       html += '</table>';
+
+      // Mobile cards
+      html += `<div class="product-cards">`;
+      for (const p of products) {
+        const img = p.image_url
+          ? `<img src="${p.image_url.startsWith('http') ? p.image_url : '../' + p.image_url}" alt="${p.name}" class="product-card-img" loading="lazy">`
+          : `<div class="product-card-img-placeholder"><i class="fas fa-image"></i></div>`;
+        const badgeHtml = p.badge ? `<span class="badge badge-text">${p.badge}</span>` : '';
+        const statusHtml = p.active
+          ? '<span class="badge badge-active">Activo</span>'
+          : '<span class="badge badge-inactive">Inactivo</span>';
+        html += `<div class="product-card">
+          ${img}
+          <div class="product-card-body">
+            <h4>${p.name}</h4>
+            <div class="meta">
+              <span>${p.category}</span>
+              ${badgeHtml}
+              ${statusHtml}
+            </div>
+            <span class="price">$${parseFloat(p.price).toFixed(2)}</span>
+          </div>
+          <div class="product-card-actions">
+            <button class="btn-icon edit" onclick="editProduct(${p.id})" title="Editar"><i class="fas fa-pen"></i></button>
+            <button class="btn-icon toggle" onclick="toggleActive(${p.id})" title="${p.active ? 'Desactivar' : 'Activar'}">
+              <i class="fas ${p.active ? 'fa-eye-slash' : 'fa-eye'}"></i>
+            </button>
+            <button class="btn-icon delete" onclick="deleteProduct(${p.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>`;
+      }
+      html += `</div>`;
+
       container.innerHTML = html;
     }
 
@@ -523,6 +617,20 @@
       localStorage.removeItem('supabase.auth.token');
       window.location.href = 'login.html';
     }
+
+    // Admin mobile nav toggle
+    function toggleAdminNav() {
+      document.getElementById('adminNavOverlay').classList.toggle('open');
+    }
+
+    // Close admin nav on outside click
+    document.addEventListener('click', (e) => {
+      const overlay = document.getElementById('adminNavOverlay');
+      const toggle = document.querySelector('.admin-menu-toggle');
+      if (overlay.classList.contains('open') && !overlay.contains(e.target) && !toggle.contains(e.target)) {
+        overlay.classList.remove('open');
+      }
+    });
 
     // Close modal on overlay click
     document.getElementById('modalOverlay').addEventListener('click', (e) => {
