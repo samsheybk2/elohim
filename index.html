@@ -1481,21 +1481,30 @@
         return;
       }
 
-      // Build order summary string
-      const itemsStr = cart.map(item =>
-        `${item.qty}x ${item.name} ($${item.price.toFixed(2)})`
-      ).join(', ');
+      // Build order items (one per line, no prices)
+      const itemsStr = cart.map(item => `\u{1F31F} ${item.qty}x ${item.name}`).join('\n');
 
-      const total = getCartTotal().toFixed(2);
+      // Greeting based on time of day
+      const hour = new Date().getHours();
+      let greeting;
+      if (hour < 12) greeting = '\u2615 Buenos d\u00edas';
+      else if (hour < 18) greeting = '\u2600\ufe0f Buenas tardes';
+      else greeting = '\ud83c\udf19 Buenas noches';
 
-      const notesStr = notes ? `\nNotas: ${notes}` : '';
+      const notesStr = notes ? `\n\n\u{1F4DD} *Observaciones:* ${notes}` : '';
 
-      // Include Google Maps link if GPS was used
+      // Location link
       const mapsLink = lastGpsCoords
-        ? `\n📍 Ubicación: https://www.google.com/maps?q=${lastGpsCoords.latitude},${lastGpsCoords.longitude}`
-        : '';
+        ? `https://www.google.com/maps?q=${lastGpsCoords.latitude},${lastGpsCoords.longitude}`
+        : `https://www.google.com/maps/search/${encodeURIComponent(address)}`;
 
-      const message = `¡Hola! Quiero hacer un pedido:%0A%0A${encodeURIComponent(itemsStr)}%0A%0ATotal: $${total}%0A%0AMi nombre es ${encodeURIComponent(name)}, para entrega en ${encodeURIComponent(address)}. Pagaré con ${encodeURIComponent(payment)}.${encodeURIComponent(notesStr)}${encodeURIComponent(mapsLink)}%0A%0A¡Gracias!`;
+      const message =
+        `\u{1F64B} Hola ${greeting},\u{a0}mi nombre es *${name}*, por favor me gustar\u00eda ordenar lo siguiente:\n\n` +
+        `${itemsStr}${notesStr}\n\n` +
+        `\u{1F4CD} Mi direcci\u00f3n es la siguiente: ${mapsLink}\n\n` +
+        `\u{1F64F} Gracias, quedo a la espera.`;
+
+      const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
       const url = `https://wa.me/${whatsappNumber}?text=${message}`;
 
