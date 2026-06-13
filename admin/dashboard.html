@@ -322,6 +322,7 @@
     <button class="admin-menu-toggle" onclick="toggleAdminNav()" aria-label="Menú"><i class="fas fa-bars"></i></button>
     <div class="admin-nav-overlay" id="adminNavOverlay">
       <span style="padding:0.6rem 0.8rem;color:#666;font-size:0.78rem;" id="adminNavEmail"></span>
+      <button onclick="toggleTheme()" style="display:flex;align-items:center;gap:0.5rem;"><i class="fas fa-sun"></i> Modo claro</button>
       <a href="../index.html" target="_blank"><i class="fas fa-external-link-alt"></i> Ver Sitio</a>
       <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
     </div>
@@ -796,21 +797,28 @@
     });
 
     // ===== THEME TOGGLE =====
+    function updateThemeUI(next) {
+      document.querySelectorAll('.theme-toggle i').forEach(el => {
+        el.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+      });
+      const mobileBtn = document.querySelector('#adminNavOverlay button[onclick="toggleTheme()"]');
+      if (mobileBtn) {
+        mobileBtn.innerHTML = next === 'light'
+          ? '<i class="fas fa-moon"></i> Modo oscuro'
+          : '<i class="fas fa-sun"></i> Modo claro';
+      }
+    }
     function toggleTheme() {
       const html = document.documentElement;
       const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       html.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
-      document.querySelectorAll('.theme-toggle i').forEach(el => {
-        el.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-      });
+      updateThemeUI(next);
     }
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       document.documentElement.setAttribute('data-theme', savedTheme);
-      document.querySelectorAll('.theme-toggle i').forEach(el => {
-        el.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-      });
+      updateThemeUI(savedTheme);
     }
 
     // ===== INIT =====
