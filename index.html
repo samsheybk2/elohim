@@ -1526,8 +1526,9 @@
     }
 
     function renderHours() {
-      const h = businessSettings.hours;
+      let h = businessSettings.hours;
       if (!h) return;
+      if (typeof h === 'string') { try { h = JSON.parse(h); } catch(e) { return; } }
       const container = document.getElementById('hoursContainer');
       const dayNames = { monday:'Lunes', tuesday:'Martes', wednesday:'Miércoles', thursday:'Jueves', friday:'Viernes', saturday:'Sábado', sunday:'Domingo' };
       const order = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];

@@ -1182,7 +1182,7 @@
         maps_query: document.getElementById('setMapsQuery').value.trim(),
         maps_embed_src: document.getElementById('setMapsEmbed').value.trim(),
         tiktok_url: document.getElementById('setTiktok').value.trim(),
-        hours: JSON.stringify({
+        hours: {
           monday: document.getElementById('hours_monday').value.trim(),
           tuesday: document.getElementById('hours_tuesday').value.trim(),
           wednesday: document.getElementById('hours_wednesday').value.trim(),
@@ -1190,7 +1190,7 @@
           friday: document.getElementById('hours_friday').value.trim(),
           saturday: document.getElementById('hours_saturday').value.trim(),
           sunday: document.getElementById('hours_sunday').value.trim()
-        }),
+        },
         delivery_fee: parseFloat(document.getElementById('setDeliveryFee').value) || 0,
         bolivar_rate: parseFloat(document.getElementById('setBolivarRate').value) || 0,
         payment_instructions: document.getElementById('setPaymentInstructions').value.trim()
