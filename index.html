@@ -908,6 +908,14 @@
       display: none;
     }
     .floating-cart-btn:hover { transform: scale(1.1); }
+    .floating-test-btn {
+      position: fixed; bottom: 6rem; right: 1.5rem; z-index: 100;
+      width: 48px; height: 48px; border-radius: 50%; border: none;
+      background: #333; color: #fff; font-size: 1.3rem; cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3); display: flex;
+      align-items: center; justify-content: center;
+    }
+    .floating-test-btn:hover { transform: scale(1.1); background: #555; }
     .floating-cart-btn .badge {
       position: absolute;
       top: -4px;
@@ -1146,12 +1154,6 @@
           <button type="submit" class="btn-whatsapp" id="btnWhatsApp" disabled>
             <i class="fab fa-whatsapp"></i> Enviar Pedido por WhatsApp
           </button>
-          <div style="text-align:center;margin-top:0.5rem;">
-            <a href="#" onclick="testOrder();return false;" style="font-size:0.75rem;color:#888;text-decoration:underline;">🧪 Test pedido</a>
-          </div>
-          <button type="button" class="btn-back" onclick="hideOrderForm()">
-            <i class="fas fa-arrow-left"></i> Volver al resumen
-          </button>
         </form>
       </div>
     </div>
@@ -1208,6 +1210,9 @@
     <i class="fas fa-cart-shopping"></i>
     <span class="badge" id="floatingCartCount">0</span>
   </button>
+
+  <!-- ===== TEST ORDER BUTTON ===== -->
+  <button class="floating-test-btn" onclick="testOrder()" aria-label="Test pedido" title="Test pedido">🧪</button>
 
   <!-- ===== TOAST ===== -->
   <div class="toast" id="toast"></div>
@@ -1505,22 +1510,54 @@
 
     // ===== TEST ORDER =====
     function testOrder() {
-      cart = [
-        { id: -1, name: 'Hamburguesa Clásica', price: 5.00, qty: 2 },
-        { id: -2, name: 'Papa Frita Grande', price: 3.50, qty: 1 },
-        { id: -3, name: 'Refresco 1L', price: 2.00, qty: 2 }
+      const settings = businessSettings;
+      const deliveryFee = settings.delivery_fee || 3;
+      const bolivarRate = settings.bolivar_rate || 0;
+      const payInstructions = settings.payment_instructions || '';
+      const items = [
+        { name: 'Hamburguesa Cl\u00e1sica', price: 5.00, qty: 2 },
+        { name: 'Papa Frita Grande', price: 3.50, qty: 1 },
+        { name: 'Refresco 1L', price: 2.00, qty: 2 }
       ];
-      updateCartUI();
-      document.getElementById('customerName').value = 'Juan Pérez (Test)';
-      document.getElementById('customerAddress').value = 'Calle Principal, Santa Rita';
-      document.getElementById('deliveryMethod').value = 'Delivery';
-      document.getElementById('paymentMethod').value = 'Efectivo';
-      document.getElementById('customerNotes').value = 'Sin cebolla';
-      document.getElementById('acceptTerms').checked = true;
-      updateWhatsAppButton();
-      const btn = document.getElementById('btnWhatsApp');
-      btn.disabled = false;
-      btn.click();
+      const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+      const totalUSD = subtotal + deliveryFee;
+      const totalBs = bolivarRate > 0 ? totalUSD * bolivarRate : 0;
+      const itemsStr = items.map(i => `${i.qty}x - ${i.name} ($${i.price.toFixed(2)})`).join('\n');
+      const mapsLink = settings.maps_link || 'https://maps.google.com/?q=Santa+Rita+Aragua+Venezuela';
+      const phoneDisplay = settings.whatsapp_number || whatsappNumber;
+      const parts = [];
+      parts.push('\u00a1Hola! Acabo de realizar el siguiente pedido en su tienda:');
+      parts.push(' _________');
+      parts.push('');
+      parts.push('Resumen del pedido:');
+      parts.push('');
+      parts.push(itemsStr);
+      parts.push('');
+      parts.push(`\u{1F69A} Env\u00edo: $${deliveryFee.toFixed(2)}`);
+      parts.push(`\u{1FA99} Total: $${totalUSD.toFixed(2)}`);
+      if (totalBs > 0) parts.push(`\u{1F7E2} Total al Cambio: Bs. ${totalBs.toFixed(2)}`);
+      parts.push(`\u{1F4DD} Notas: Sin cebolla`);
+      parts.push('');
+      parts.push('_________');
+      parts.push('');
+      parts.push('Juan P\u00e9rez (Test)');
+      parts.push(`\u{1F4DE} ${phoneDisplay}`);
+      parts.push(`\u{1F3E0} Calle Principal, Santa Rita`);
+      parts.push(`\u{1F6F5} Delivery`);
+      parts.push(`\u{1F4B5} Efectivo`);
+      parts.push('');
+      parts.push('_________');
+      parts.push('');
+      if (payInstructions) {
+        parts.push('Instrucciones para el pago por Efectivo:');
+        parts.push(payInstructions);
+        parts.push('');
+      }
+      parts.push(`Ubicaci\u00f3n en Google Maps: ${mapsLink}`);
+      parts.push('');
+      parts.push('\u261d\ufe0f Por favor env\u00eda este mensaje y te atenderemos lo antes posible');
+      const msg = parts.join('\n');
+      window.open(`https://wa.me/${phoneDisplay}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     // ===== SEND ORDER VIA WHATSAPP =====
