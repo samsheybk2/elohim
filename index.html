@@ -1111,6 +1111,13 @@
             <div id="gpsStatus" style="font-size:0.78rem;color:#888;min-height:1.2rem;"></div>
           </div>
           <div class="form-group">
+            <label for="deliveryMethod">Tipo de entrega *</label>
+            <select id="deliveryMethod" required>
+              <option value="Delivery">🛵 Delivery</option>
+              <option value="Retiro en local">🏪 Retiro en local</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="paymentMethod">Método de pago *</label>
             <select id="paymentMethod" required>
               <option value="">Selecciona...</option>
@@ -1419,9 +1426,10 @@
       const name = document.getElementById('customerName').value.trim();
       const address = document.getElementById('customerAddress').value.trim();
       const payment = document.getElementById('paymentMethod').value;
+      const delivery = document.getElementById('deliveryMethod').value;
       const terms = acceptTerms.checked;
 
-      const valid = cart.length > 0 && name && address && payment && terms;
+      const valid = cart.length > 0 && name && address && payment && delivery && terms;
       btnWhatsApp.disabled = !valid;
     }
 
@@ -1497,8 +1505,23 @@
     // ===== FORM EVENT LISTENERS =====
     document.getElementById('customerName').addEventListener('input', updateWhatsAppButton);
     document.getElementById('customerAddress').addEventListener('input', updateWhatsAppButton);
+    document.getElementById('deliveryMethod').addEventListener('change', updateWhatsAppButton);
     document.getElementById('paymentMethod').addEventListener('change', updateWhatsAppButton);
     acceptTerms.addEventListener('change', updateWhatsAppButton);
+
+    // ===== BUSINESS SETTINGS =====
+    let businessSettings = {};
+
+    async function loadSettings() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/settings?id=eq.1`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY }
+        });
+        if (!res.ok) return;
+        const data = (await res.json())[0];
+        if (data) businessSettings = data;
+      } catch (e) { /* ignore */ }
+    }
 
     // ===== SEND ORDER VIA WHATSAPP =====
     function sendOrder(e) {
@@ -1511,6 +1534,7 @@
 
       const name = document.getElementById('customerName').value.trim();
       const address = document.getElementById('customerAddress').value.trim();
+      const delivery = document.getElementById('deliveryMethod').value;
       const payment = document.getElementById('paymentMethod').value;
       const notes = document.getElementById('customerNotes').value.trim();
 
@@ -1519,36 +1543,71 @@
         return;
       }
 
-      // Build order items (one per line, no prices)
-      const itemsStr = cart.map(item => `\u{1F31F} ${item.qty}x ${item.name}`).join('\n');
+      const settings = businessSettings;
+      const deliveryFee = settings.delivery_fee || 3;
+      const bolivarRate = settings.bolivar_rate || 0;
+      const payInstructions = settings.payment_instructions || '';
 
-      // Greeting based on time of day
-      const hour = new Date().getHours();
-      let greeting;
-      if (hour < 12) greeting = '\u2615 Buenos d\u00edas';
-      else if (hour < 18) greeting = '\u2600\ufe0f Buenas tardes';
-      else greeting = '\ud83c\udf19 Buenas noches';
+      // Calculate totals
+      const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const totalUSD = delivery === 'Delivery' ? subtotal + deliveryFee : subtotal;
+      const totalBs = bolivarRate > 0 ? totalUSD * bolivarRate : 0;
 
-      const notesStr = notes ? `\n\n\u{1F4DD} *Observaciones:* ${notes}` : '';
+      // Items with prices
+      const itemsStr = cart.map(item => `${item.qty}x - ${item.name} ($${item.price.toFixed(2)})`).join('\n');
 
       // Location link
       const mapsLink = lastGpsCoords
         ? `https://www.google.com/maps?q=${lastGpsCoords.latitude},${lastGpsCoords.longitude}`
         : `https://www.google.com/maps/search/${encodeURIComponent(address)}`;
 
-      const message =
-        `\u{1F64B} Hola ${greeting},\u{a0}mi nombre es *${name}*, por favor me gustar\u00eda ordenar lo siguiente:\n\n` +
-        `${itemsStr}${notesStr}\n\n` +
-        `\u{1F4CD} Mi direcci\u00f3n es la siguiente: ${mapsLink}\n\n` +
-        `\u{1F64F} Gracias, quedo a la espera.`;
+      const phoneDisplay = settings.whatsapp_number || whatsappNumber;
 
+      const parts = [];
+      parts.push('\u00a1Hola! Acabo de realizar el siguiente pedido en su tienda:');
+      parts.push(' _________');
+      parts.push('');
+      parts.push('Resumen del pedido:');
+      parts.push('');
+      parts.push(itemsStr);
+      parts.push('');
+      if (delivery === 'Delivery') {
+        parts.push(`\u{1F69A} Env\u00edo: $${deliveryFee.toFixed(2)}`);
+      }
+      parts.push(`\u{1FA99} Total: $${totalUSD.toFixed(2)}`);
+      if (totalBs > 0) {
+        parts.push(`\u{1F7E2} Total al Cambio: Bs. ${totalBs.toFixed(2)}`);
+      }
+      if (notes) {
+        parts.push(`\u{1F4DD} Notas: ${notes}`);
+      }
+      parts.push('');
+      parts.push('_________');
+      parts.push('');
+      parts.push(name);
+      parts.push(`\u{1F4DE} ${phoneDisplay}`);
+      parts.push(`\u{1F3E0} ${address}`);
+      parts.push(`\u{1F6F5} ${delivery}`);
+      const paymentLabels = { 'Efectivo': '\u{1F4B5}', 'Transferencia': '\u{1F4B1}', 'Pago m\u00f3vil': '\u{1F4B1}', 'Zelle': '\u{1F4B1}', 'Tarjeta de d\u00e9bito/cr\u00e9dito': '\u{1F0CF}' };
+      parts.push(`${paymentLabels[payment] || '\u{1F4B3}'} ${payment}`);
+      parts.push('');
+      parts.push('_________');
+      parts.push('');
+      if (payInstructions) {
+        parts.push(`Instrucciones para el pago por ${payment}:`);
+        parts.push(payInstructions);
+        parts.push('');
+      }
+      parts.push(`Ubicaci\u00f3n en Google Maps: ${mapsLink}`);
+      parts.push('');
+      parts.push('\u261d\ufe0f Por favor env\u00eda este mensaje y te atenderemos lo antes posible');
+
+      const message = parts.join('\n');
       const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-      // Open WhatsApp
       window.open(url, '_blank');
 
-      // Reset cart and form
-      showToast('✅ Pedido enviado a WhatsApp. ¡Gracias!');
+      showToast('\u2705 Pedido enviado a WhatsApp. \u00a1Gracias!');
       cart = [];
       lastGpsCoords = null;
       updateCartUI();
@@ -1703,6 +1762,7 @@
     updateCartUI();
     initEmbers();
     loadMenuData();
+    loadSettings();
 
     // ===== SERVICE WORKER (PWA) =====
     if ('serviceWorker' in navigator) {

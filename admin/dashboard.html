@@ -452,6 +452,21 @@
             <label for="setHoursSun"><i class="fas fa-clock"></i> Horario domingo</label>
             <input type="text" id="setHoursSun" placeholder="Domingo: 12:00 PM - 8:00 PM">
           </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="setDeliveryFee"><i class="fas fa-truck"></i> Costo de envío ($)</label>
+              <input type="number" id="setDeliveryFee" step="0.01" min="0" placeholder="3.00">
+            </div>
+            <div class="form-group">
+              <label for="setBolivarRate"><i class="fas fa-exchange-alt"></i> Tasa Bs./$ (0 si no aplica)</label>
+              <input type="number" id="setBolivarRate" step="0.01" min="0" placeholder="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="setPaymentInstructions"><i class="fas fa-credit-card"></i> Instrucciones de pago</label>
+            <textarea id="setPaymentInstructions" rows="4" placeholder="Banco Nacional de Credito 0191&#10;21.466.863&#10;04243130982"></textarea>
+            <small style="color:#666;font-size:0.72rem;">Se muestra al final del pedido. Usa \n para saltos de línea.</small>
+          </div>
           <div id="settingsMsg"></div>
           <button type="submit" class="btn-save-settings"><i class="fas fa-save"></i> Guardar Configuración</button>
         </form>
@@ -1124,6 +1139,9 @@
       document.getElementById('setTiktok').value = data.tiktok_url || '';
       document.getElementById('setHoursWeek').value = data.working_hours_week || '';
       document.getElementById('setHoursSun').value = data.working_hours_sun || '';
+      document.getElementById('setDeliveryFee').value = data.delivery_fee || '';
+      document.getElementById('setBolivarRate').value = data.bolivar_rate || '';
+      document.getElementById('setPaymentInstructions').value = data.payment_instructions || '';
     }
 
     document.getElementById('settingsForm').addEventListener('submit', async (e) => {
@@ -1140,7 +1158,10 @@
         maps_embed_src: document.getElementById('setMapsEmbed').value.trim(),
         tiktok_url: document.getElementById('setTiktok').value.trim(),
         working_hours_week: document.getElementById('setHoursWeek').value.trim(),
-        working_hours_sun: document.getElementById('setHoursSun').value.trim()
+        working_hours_sun: document.getElementById('setHoursSun').value.trim(),
+        delivery_fee: parseFloat(document.getElementById('setDeliveryFee').value) || 0,
+        bolivar_rate: parseFloat(document.getElementById('setBolivarRate').value) || 0,
+        payment_instructions: document.getElementById('setPaymentInstructions').value.trim()
       };
 
       const headers = {
