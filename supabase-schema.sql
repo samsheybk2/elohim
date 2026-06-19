@@ -29,12 +29,15 @@ CREATE TABLE products (
 
 -- 3. FUNCIÓN PARA ACTUALIZAR updated_at AUTOMÁTICAMENTE
 CREATE OR REPLACE FUNCTION update_updated_at()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 CREATE TRIGGER products_updated_at
   BEFORE UPDATE ON products
@@ -55,24 +58,24 @@ CREATE POLICY "Cualquiera puede leer productos activos"
 
 -- Política: solo admins autenticados pueden ESCRIBIR
 CREATE POLICY "Admins pueden insertar productos"
-  ON products FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  ON products FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
 CREATE POLICY "Admins pueden actualizar productos"
   ON products FOR UPDATE
-  USING (auth.role() = 'authenticated')
-  WITH CHECK (auth.role() = 'authenticated');
+  USING (auth.uid() IS NOT NULL)
+  WITH CHECK (auth.uid() IS NOT NULL);
 
 CREATE POLICY "Admins pueden eliminar productos"
-  ON products FOR DELETE USING (auth.role() = 'authenticated');
+  ON products FOR DELETE USING (auth.uid() IS NOT NULL);
 
 CREATE POLICY "Admins pueden insertar categorías"
-  ON categories FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  ON categories FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
 CREATE POLICY "Admins pueden actualizar categorías"
-  ON categories FOR UPDATE USING (auth.role() = 'authenticated');
+  ON categories FOR UPDATE USING (auth.uid() IS NOT NULL);
 
 CREATE POLICY "Admins pueden eliminar categorías"
-  ON categories FOR DELETE USING (auth.role() = 'authenticated');
+  ON categories FOR DELETE USING (auth.uid() IS NOT NULL);
 
 -- 5. DATOS INICIALES - CATEGORÍAS
 INSERT INTO categories (name, slug, icon, display_order) VALUES
@@ -140,14 +143,11 @@ VALUES (1, '+58 424-364-6260', 'Santa Rita, Aragua, Venezuela',
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES ('products', 'products', true, 5242880, '{"image/png","image/jpeg","image/webp","image/gif"}');
 
--- Política: cualquiera puede leer imágenes
-CREATE POLICY "Public can read product images"
-  ON storage.objects FOR SELECT USING (bucket_id = 'products');
-
+-- El bucket es público, no necesita política SELECT (las URLs funcionan igual)
 -- Política: admins autenticados pueden subir/eliminar
 CREATE POLICY "Admins can upload product images"
-  ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'products' AND auth.role() = 'authenticated');
+  ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'products' AND auth.uid() IS NOT NULL);
 
 CREATE POLICY "Admins can delete product images"
-  ON storage.objects FOR DELETE USING (bucket_id = 'products' AND auth.role() = 'authenticated');
+  ON storage.objects FOR DELETE USING (bucket_id = 'products' AND auth.uid() IS NOT NULL);
 */
