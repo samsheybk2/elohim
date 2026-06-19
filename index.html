@@ -1486,9 +1486,8 @@
     }
 
     function openDirections() {
-      const s = businessSettings;
-      const dest = s.maps_link || `https://maps.google.com/?q=${encodeURIComponent(s.address || 'Santa+Rita+Aragua+Venezuela')}`;
-      window.open(dest, '_blank');
+      const addr = businessSettings.address || 'Santa+Rita+Aragua+Venezuela';
+      window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`, '_blank');
     }
 
     // ===== FORM EVENT LISTENERS =====
@@ -1756,16 +1755,10 @@
       const addressLink = document.querySelector('.footer-info a[href*="maps"]');
       if (addressLink && s.address) {
         addressLink.textContent = s.address;
-        addressLink.href = s.maps_link || `https://maps.google.com/?q=${encodeURIComponent(s.address)}`;
+        addressLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`;
       }
       const mapsIframe = document.querySelector('.footer-map iframe');
-      if (mapsIframe) {
-        if (s.maps_link && s.maps_link.includes('/embed')) {
-          mapsIframe.src = s.maps_link;
-        } else if (s.address) {
-          mapsIframe.src = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.5!2d-67.5!3d10.2!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e803e5e2e0a0a0b%3A0x0!2z${encodeURIComponent(s.address)}!5e0!3m2!1ses!2sve!4v1`;
-        }
-      }
+      if (mapsIframe && s.maps_link) mapsIframe.src = s.maps_link;
       const tiktokLink = document.querySelector('.footer-social a[aria-label="TikTok"]');
       if (tiktokLink && s.tiktok_url) tiktokLink.href = s.tiktok_url;
       const whatsappLink = document.querySelector('.footer-social a[aria-label="WhatsApp"]');
