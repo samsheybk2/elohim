@@ -916,14 +916,17 @@
       display: none;
     }
     .floating-cart-btn:hover { transform: scale(1.1); }
-    .floating-test-btn {
-      position: fixed; bottom: 6rem; right: 1.5rem; z-index: 100;
-      width: 48px; height: 48px; border-radius: 50%; border: none;
-      background: #333; color: #fff; font-size: 1.3rem; cursor: pointer;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3); display: flex;
-      align-items: center; justify-content: center;
+    /* ===== OPEN / CLOSED NEON SIGN ===== */
+    .open-sign {
+      position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 99;
+      padding: 0.4rem 1rem; border-radius: 6px; font-family: 'Bebas Neue',sans-serif;
+      font-size: 1rem; letter-spacing: 3px; text-transform: uppercase;
+      background: #111; border: 2px solid; user-select: none;
+      box-shadow: 0 0 12px rgba(0,0,0,0.5);
     }
-    .floating-test-btn:hover { transform: scale(1.1); background: #555; }
+    .open-sign.open { border-color: #39ff14; color: #39ff14; box-shadow: 0 0 12px rgba(57,255,20,0.4), 0 0 30px rgba(57,255,20,0.15); }
+    .open-sign.closed { border-color: #ff1744; color: #ff1744; box-shadow: 0 0 12px rgba(255,23,68,0.4), 0 0 30px rgba(255,23,68,0.15); }
+    [data-theme="light"] .open-sign { background: #fff; }
     .floating-cart-btn .badge {
       position: absolute;
       top: -4px;
@@ -1213,8 +1216,8 @@
     <span class="badge" id="floatingCartCount">0</span>
   </button>
 
-  <!-- ===== TEST ORDER BUTTON ===== -->
-  <button class="floating-test-btn" onclick="testOrder()" aria-label="Test pedido" title="Test pedido">🧪</button>
+  <!-- ===== OPEN / CLOSED SIGN ===== -->
+  <div class="open-sign" id="openSign"><span id="openSignText">--</span></div>
 
   <!-- ===== TOAST ===== -->
   <div class="toast" id="toast"></div>
@@ -1243,16 +1246,15 @@
         const [catRes, prodRes] = await Promise.all([
           fetch(`${SUPABASE_URL}/rest/v1/categories?select=*&order=display_order.asc`, {
             headers: { 'apikey': SUPABASE_ANON_KEY }
-          }),
+          }).catch(() => null),
           fetch(`${SUPABASE_URL}/rest/v1/products?select=*&active=eq.true&order=category.asc,sort_order.asc`, {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }
           })
         ]);
 
-        if (!catRes.ok) throw new Error('Error loading categories');
         if (!prodRes.ok) throw new Error(await prodRes.text());
 
-        categoriesData = await catRes.json();
+        categoriesData = catRes && catRes.ok ? (await catRes.json()) : [];
         const products = await prodRes.json();
 
         if (!products) return;
@@ -1525,59 +1527,6 @@
     let businessSettings = {};
 
     // ===== TEST ORDER =====
-    function testOrder() {
-      const settings = businessSettings;
-      const deliveryFee = settings.delivery_fee || 3;
-      const bolivarRate = settings.bolivar_rate || 0;
-      const payInstructions = settings.payment_instructions || '';
-      const items = [
-        { name: 'Hamburguesa Cl\u00e1sica', price: 5.00, qty: 2 },
-        { name: 'Papa Frita Grande', price: 3.50, qty: 1 },
-        { name: 'Refresco 1L', price: 2.00, qty: 2 }
-      ];
-      const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
-      const totalUSD = subtotal + deliveryFee;
-      const totalBs = bolivarRate > 0 ? totalUSD * bolivarRate : 0;
-      const itemsStr = items.map(i => `${i.qty}x - ${i.name} ($${i.price.toFixed(2)})`).join('\n');
-      const mapsLink = settings.maps_link || 'https://maps.google.com/?q=Santa+Rita+Aragua+Venezuela';
-      const phoneDisplay = settings.whatsapp_number || whatsappNumber;
-      const parts = [];
-      parts.push('\u00a1Hola! Acabo de realizar el siguiente pedido en su tienda:');
-      parts.push(' _________');
-      parts.push('');
-      parts.push('Resumen del pedido:');
-      parts.push('');
-      parts.push(itemsStr);
-      parts.push('');
-      parts.push(`\u{1F69A} Env\u00edo: $${deliveryFee.toFixed(2)}`);
-      parts.push(`\u{1FA99} Total: $${totalUSD.toFixed(2)}`);
-      if (totalBs > 0) parts.push(`\u{1F7E2} Total al Cambio: Bs. ${totalBs.toFixed(2)}`);
-      parts.push(`\u{1F4DD} Notas: Sin cebolla`);
-      parts.push('');
-      parts.push('_________');
-      parts.push('');
-      parts.push('Juan P\u00e9rez (Test)');
-      parts.push(`\u{1F4DE} ${phoneDisplay}`);
-      parts.push(`\u{1F3E0} Calle Principal, Santa Rita`);
-      parts.push(`\u{1F6F5} Delivery`);
-      parts.push(`\u{1F4B5} Efectivo`);
-      parts.push('');
-      parts.push('_________');
-      parts.push('');
-      if (payInstructions) {
-        parts.push('Instrucciones para el pago por Efectivo:');
-        parts.push(payInstructions);
-        parts.push('');
-      }
-      parts.push(`Ubicaci\u00f3n en Google Maps: ${mapsLink}`);
-      parts.push('');
-      parts.push('\u261d\ufe0f Por favor env\u00eda este mensaje y te atenderemos lo antes posible');
-      parts.push('');
-      parts.push('https://elohim-five.vercel.app');
-      const msg = parts.join('\n');
-      window.open(`https://wa.me/${phoneDisplay}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
     // ===== SEND ORDER VIA WHATSAPP =====
     function sendOrder(e) {
       e.preventDefault();
@@ -1828,6 +1777,7 @@
 
     function renderSettings() {
       renderHours();
+      updateOpenSign();
       const s = businessSettings;
       if (!s) return;
       const phoneEl = document.getElementById('phoneDisplay');
@@ -1863,11 +1813,35 @@
       } catch (e) { /* ignore */ }
     }
 
+    // ===== OPEN / CLOSED STATUS =====
+    function updateOpenSign() {
+      const sign = document.getElementById('openSign');
+      const text = document.getElementById('openSignText');
+      const h = businessSettings.hours;
+      if (!h) { text.textContent = '--'; sign.className = 'open-sign'; return; }
+      const dayNames = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+      const today = dayNames[new Date().getDay()];
+      const range = h[today];
+      if (!range) { text.textContent = 'CERRADO'; sign.className = 'open-sign closed'; return; }
+      const m = range.match(/(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
+      if (!m) { text.textContent = 'CERRADO'; sign.className = 'open-sign closed'; return; }
+      const toMin = (h, m, ap) => (h % 12 + (ap === 'PM' ? 12 : 0)) * 60 + m;
+      const now = new Date();
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      const startMin = toMin(parseInt(m[1]), parseInt(m[2]), m[3].toUpperCase());
+      let endMin = toMin(parseInt(m[4]), parseInt(m[5]), m[6].toUpperCase());
+      if (endMin <= startMin) endMin += 1440;
+      const isOpen = nowMin >= startMin && nowMin < endMin;
+      text.textContent = isOpen ? 'ABIERTO' : 'CERRADO';
+      sign.className = 'open-sign ' + (isOpen ? 'open' : 'closed');
+    }
+
     // ===== INIT =====
     updateCartUI();
     initEmbers();
     loadMenuData();
     loadSettings();
+    setInterval(updateOpenSign, 60000);
 
     // ===== SERVICE WORKER (PWA) =====
     if ('serviceWorker' in navigator) {
