@@ -1162,8 +1162,9 @@
           <h4><i class="fas fa-location-dot"></i> ELOHIM FAST FOOD</h4>
           <p><i class="fas fa-phone"></i> <a href="tel:+584243646260" id="phoneDisplay">+58 424-364-6260</a></p>
           <p><i class="fas fa-clock"></i> <strong>Horarios:</strong></p>
-          <p style="margin-left:1.5rem;">Lun - Sáb: 11:00 AM - 10:00 PM</p>
-          <p style="margin-left:1.5rem;">Domingo: 12:00 PM - 8:00 PM</p>
+          <div id="hoursContainer">
+            <p style="margin-left:1.5rem;color:#555;" id="hoursFallback"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>
+          </div>
           <p><i class="fas fa-location-dot"></i> <a href="https://www.google.com/maps/search/?api=1&query=Santa+Rita+Aragua+Venezuela" target="_blank" rel="noopener" style="color:#ccc;text-decoration:underline;">Santa Rita, Aragua, Venezuela</a></p>
         </div>
 
@@ -1520,7 +1521,17 @@
         if (!res.ok) return;
         const data = (await res.json())[0];
         if (data) businessSettings = data;
+        renderHours();
       } catch (e) { /* ignore */ }
+    }
+
+    function renderHours() {
+      const h = businessSettings.hours;
+      if (!h) return;
+      const container = document.getElementById('hoursContainer');
+      const dayNames = { monday:'Lunes', tuesday:'Martes', wednesday:'Miércoles', thursday:'Jueves', friday:'Viernes', saturday:'Sábado', sunday:'Domingo' };
+      const order = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+      container.innerHTML = order.map(d => h[d] ? `<p style="margin-left:1.5rem;"><strong>${dayNames[d]}:</strong> ${h[d]}</p>` : '').join('');
     }
 
     // ===== SEND ORDER VIA WHATSAPP =====

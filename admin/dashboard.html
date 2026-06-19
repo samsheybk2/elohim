@@ -444,13 +444,35 @@
             <label for="setTiktok"><i class="fab fa-tiktok"></i> URL de TikTok</label>
             <input type="text" id="setTiktok" placeholder="https://www.tiktok.com/@elohimvnz">
           </div>
-          <div class="form-group">
-            <label for="setHoursWeek"><i class="fas fa-clock"></i> Horario entre semana</label>
-            <input type="text" id="setHoursWeek" placeholder="Lun - Sáb: 11:00 AM - 10:00 PM">
-          </div>
-          <div class="form-group">
-            <label for="setHoursSun"><i class="fas fa-clock"></i> Horario domingo</label>
-            <input type="text" id="setHoursSun" placeholder="Domingo: 12:00 PM - 8:00 PM">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> Lunes</label>
+              <input type="text" id="hours_monday" placeholder="11:00 AM - 10:00 PM">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> Martes</label>
+              <input type="text" id="hours_tuesday" placeholder="11:00 AM - 10:00 PM">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> Miércoles</label>
+              <input type="text" id="hours_wednesday" placeholder="11:00 AM - 10:00 PM">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> Jueves</label>
+              <input type="text" id="hours_thursday" placeholder="11:00 AM - 10:00 PM">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> Viernes</label>
+              <input type="text" id="hours_friday" placeholder="11:00 AM - 10:00 PM">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> Sábado</label>
+              <input type="text" id="hours_saturday" placeholder="11:00 AM - 10:00 PM">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> Domingo</label>
+              <input type="text" id="hours_sunday" placeholder="12:00 PM - 8:00 PM">
+            </div>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -1137,8 +1159,11 @@
       document.getElementById('setMapsQuery').value = data.maps_query || '';
       document.getElementById('setMapsEmbed').value = data.maps_embed_src || '';
       document.getElementById('setTiktok').value = data.tiktok_url || '';
-      document.getElementById('setHoursWeek').value = data.working_hours_week || '';
-      document.getElementById('setHoursSun').value = data.working_hours_sun || '';
+      const days = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+      const hours = data.hours || {};
+      days.forEach(d => {
+        document.getElementById('hours_' + d).value = hours[d] || '';
+      });
       document.getElementById('setDeliveryFee').value = data.delivery_fee || '';
       document.getElementById('setBolivarRate').value = data.bolivar_rate || '';
       document.getElementById('setPaymentInstructions').value = data.payment_instructions || '';
@@ -1157,8 +1182,15 @@
         maps_query: document.getElementById('setMapsQuery').value.trim(),
         maps_embed_src: document.getElementById('setMapsEmbed').value.trim(),
         tiktok_url: document.getElementById('setTiktok').value.trim(),
-        working_hours_week: document.getElementById('setHoursWeek').value.trim(),
-        working_hours_sun: document.getElementById('setHoursSun').value.trim(),
+        hours: JSON.stringify({
+          monday: document.getElementById('hours_monday').value.trim(),
+          tuesday: document.getElementById('hours_tuesday').value.trim(),
+          wednesday: document.getElementById('hours_wednesday').value.trim(),
+          thursday: document.getElementById('hours_thursday').value.trim(),
+          friday: document.getElementById('hours_friday').value.trim(),
+          saturday: document.getElementById('hours_saturday').value.trim(),
+          sunday: document.getElementById('hours_sunday').value.trim()
+        }),
         delivery_fee: parseFloat(document.getElementById('setDeliveryFee').value) || 0,
         bolivar_rate: parseFloat(document.getElementById('setBolivarRate').value) || 0,
         payment_instructions: document.getElementById('setPaymentInstructions').value.trim()

@@ -110,8 +110,7 @@ CREATE TABLE settings (
   maps_query TEXT NOT NULL DEFAULT '',
   whatsapp_number TEXT NOT NULL DEFAULT '',
   tiktok_url TEXT NOT NULL DEFAULT '',
-  working_hours_week TEXT NOT NULL DEFAULT 'Lun - Sáb: 11:00 AM - 10:00 PM',
-  working_hours_sun TEXT NOT NULL DEFAULT 'Domingo: 12:00 PM - 8:00 PM',
+  hours JSONB NOT NULL DEFAULT '{"monday":"11:00 AM - 10:00 PM","tuesday":"11:00 AM - 10:00 PM","wednesday":"11:00 AM - 10:00 PM","thursday":"11:00 AM - 10:00 PM","friday":"11:00 AM - 10:00 PM","saturday":"11:00 AM - 10:00 PM","sunday":"12:00 PM - 8:00 PM"}',
   delivery_fee DECIMAL(10,2) NOT NULL DEFAULT 3.00,
   bolivar_rate DECIMAL(10,2) NOT NULL DEFAULT 0,
   payment_instructions TEXT NOT NULL DEFAULT '',
@@ -128,14 +127,15 @@ CREATE POLICY "Admins pueden actualizar configuración"
   ON settings FOR UPDATE USING (auth.role() = 'authenticated');
 
 -- Insertar fila por defecto
-INSERT INTO settings (id, phone, address, maps_embed_src, maps_query, whatsapp_number, tiktok_url, delivery_fee, bolivar_rate, payment_instructions)
+INSERT INTO settings (id, phone, address, maps_embed_src, maps_query, whatsapp_number, tiktok_url, delivery_fee, bolivar_rate, payment_instructions, hours)
 VALUES (1, '+58 424-364-6260', 'Santa Rita, Aragua, Venezuela',
   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.5!2d-67.5!3d10.2!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e803e5e2e0a0a0b%3A0x0!2zU2FudGEgUml0YSwgQXJhZ3VhLCBWZW5lenVlbGE!5e0!3m2!1ses!2sve!4v1',
   'Santa+Rita+Aragua+Venezuela',
   '584243646260',
   'https://www.tiktok.com/@elohimvnz',
   3.00, 0,
-  'Banco Nacional de Credito 0191\n21.466.863\n04243130982');
+  'Banco Nacional de Credito 0191\n21.466.863\n04243130982',
+  '{"monday":"11:00 AM - 10:00 PM","tuesday":"11:00 AM - 10:00 PM","wednesday":"11:00 AM - 10:00 PM","thursday":"11:00 AM - 10:00 PM","friday":"11:00 AM - 10:00 PM","saturday":"11:00 AM - 10:00 PM","sunday":"12:00 PM - 8:00 PM"}');
 
 -- 8. STORAGE: Bucket para imágenes de productos
 -- Ejecuta esto en el SQL Editor de Supabase:
