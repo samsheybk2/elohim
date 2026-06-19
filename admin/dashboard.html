@@ -282,6 +282,69 @@
     [data-theme="light"] .btn-icon.delete:hover { background: #f8bbd0; }
     [data-theme="light"] .btn-icon.photo { background: #fff8e1; color: #f57f17; }
     [data-theme="light"] .btn-icon.photo:hover { background: #ffecb3; }
+    [data-theme="light"] .tab-bar .tab-btn { background: #e8e8e8; color: #666; }
+    [data-theme="light"] .tab-bar .tab-btn:hover { color: #ff6b00; }
+    [data-theme="light"] .tab-bar .tab-btn.active { color: #fff; }
+    [data-theme="light"] .settings-section label { color: #555; }
+    [data-theme="light"] .settings-section input,
+    [data-theme="light"] .settings-section textarea { background: #fff; border-color: #ccc; color: #333; }
+
+    /* Tab bar */
+    .tab-bar { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab-bar .tab-btn {
+      padding: 0.6rem 1.2rem; border-radius: 10px; border: none;
+      background: #1a1a1a; color: #888; font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .tab-bar .tab-btn:hover { color: #ff6b00; }
+    .tab-bar .tab-btn.active {
+      background: linear-gradient(135deg, #ff4500, #ff6b00);
+      color: #fff; box-shadow: 0 4px 16px rgba(255,69,0,0.3);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Categories */
+    .cat-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+    .cat-row {
+      display: flex; align-items: center; gap: 0.8rem;
+      background: #111; border: 1px solid #222; border-radius: 10px;
+      padding: 0.7rem 1rem;
+    }
+    .cat-row .cat-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: #1a1a1a; display: flex; align-items: center;
+      justify-content: center; color: #ff6b00; font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .cat-row .cat-info { flex: 1; min-width: 0; }
+    .cat-row .cat-info strong { display: block; font-size: 0.88rem; }
+    .cat-row .cat-info small { color: #666; font-size: 0.75rem; }
+    .cat-row .cat-actions { display: flex; gap: 0.3rem; flex-shrink: 0; }
+
+    /* Settings */
+    .settings-section { max-width: 600px; }
+    .settings-section .form-group { margin-bottom: 1rem; }
+    .settings-section label { display: block; font-size: 0.82rem; color: #aaa; margin-bottom: 0.3rem; font-weight: 600; }
+    .settings-section input,
+    .settings-section textarea {
+      width: 100%; padding: 0.6rem 0.8rem;
+      background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
+      color: #fff; font-size: 0.88rem; outline: none;
+      transition: border-color 0.3s;
+    }
+    .settings-section input:focus,
+    .settings-section textarea:focus { border-color: #ff6b00; }
+    .settings-section textarea { resize: vertical; min-height: 60px; }
+    .btn-save-settings {
+      padding: 0.7rem 1.5rem;
+      background: linear-gradient(135deg, #ff4500, #ff6b00);
+      border: none; border-radius: 10px; color: #fff;
+      font-weight: 700; font-size: 0.9rem; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-save-settings:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(255,107,0,0.3); }
+    #settingsMsg { font-size: 0.85rem; min-height: 1.2rem; margin-top: 0.5rem; }
 
     /* Admin mobile nav */
     .admin-menu-toggle { display: none; background: none; border: none; color: #888; font-size: 1.3rem; cursor: pointer; padding: 0.3rem; }
@@ -329,11 +392,71 @@
   </nav>
 
   <div class="container">
-    <div class="header-actions">
-      <h1><i class="fas fa-burger"></i> Productos del Menú</h1>
-      <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> Nuevo Producto</button>
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="products"><i class="fas fa-burger"></i> Productos</button>
+      <button class="tab-btn" data-tab="categories"><i class="fas fa-tags"></i> Categorías</button>
+      <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Configuración</button>
     </div>
-    <div id="productsTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando productos...</div></div>
+
+    <div id="tabProducts" class="tab-content active">
+      <div class="header-actions">
+        <h1><i class="fas fa-burger"></i> Productos del Menú</h1>
+        <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> Nuevo Producto</button>
+      </div>
+      <div id="productsTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando productos...</div></div>
+    </div>
+
+    <div id="tabCategories" class="tab-content">
+      <div class="header-actions">
+        <h1><i class="fas fa-tags"></i> Categorías</h1>
+        <button class="btn-add" onclick="openCatModal()"><i class="fas fa-plus"></i> Nueva Categoría</button>
+      </div>
+      <div id="categoriesContainer"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando categorías...</div></div>
+    </div>
+
+    <div id="tabSettings" class="tab-content">
+      <div class="header-actions">
+        <h1><i class="fas fa-cog"></i> Configuración del Negocio</h1>
+      </div>
+      <div class="settings-section">
+        <form id="settingsForm">
+          <div class="form-group">
+            <label for="setPhone"><i class="fas fa-phone"></i> Teléfono</label>
+            <input type="text" id="setPhone" placeholder="+58 424-364-6260">
+          </div>
+          <div class="form-group">
+            <label for="setWhatsapp"><i class="fab fa-whatsapp"></i> Número WhatsApp (sin +)</label>
+            <input type="text" id="setWhatsapp" placeholder="584243646260">
+          </div>
+          <div class="form-group">
+            <label for="setAddress"><i class="fas fa-location-dot"></i> Dirección</label>
+            <input type="text" id="setAddress" placeholder="Santa Rita, Aragua, Venezuela">
+          </div>
+          <div class="form-group">
+            <label for="setMapsQuery"><i class="fas fa-map"></i> Google Maps query (para direcciones)</label>
+            <input type="text" id="setMapsQuery" placeholder="Santa+Rita+Aragua+Venezuela">
+          </div>
+          <div class="form-group">
+            <label for="setMapsEmbed"><i class="fas fa-code"></i> Google Maps Embed src</label>
+            <textarea id="setMapsEmbed" rows="3" placeholder="https://www.google.com/maps/embed?pb=..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="setTiktok"><i class="fab fa-tiktok"></i> URL de TikTok</label>
+            <input type="text" id="setTiktok" placeholder="https://www.tiktok.com/@elohimvnz">
+          </div>
+          <div class="form-group">
+            <label for="setHoursWeek"><i class="fas fa-clock"></i> Horario entre semana</label>
+            <input type="text" id="setHoursWeek" placeholder="Lun - Sáb: 11:00 AM - 10:00 PM">
+          </div>
+          <div class="form-group">
+            <label for="setHoursSun"><i class="fas fa-clock"></i> Horario domingo</label>
+            <input type="text" id="setHoursSun" placeholder="Domingo: 12:00 PM - 8:00 PM">
+          </div>
+          <div id="settingsMsg"></div>
+          <button type="submit" class="btn-save-settings"><i class="fas fa-save"></i> Guardar Configuración</button>
+        </form>
+      </div>
+    </div>
   </div>
 
   <!-- MODAL -->
@@ -356,12 +479,7 @@
           </div>
           <div class="form-group">
             <label for="prodCategory">Categoría *</label>
-            <select id="prodCategory" required>
-              <option value="philly">Philly Cheesesteaks</option>
-              <option value="hamburguesas">Hamburguesas</option>
-              <option value="combos">Combos</option>
-              <option value="bebidas">Bebidas</option>
-            </select>
+            <select id="prodCategory" required></select>
           </div>
         </div>
         <div class="form-row" style="grid-template-columns:auto 1fr 80px;">
@@ -415,14 +533,49 @@
     </div>
   </div>
 
+  <!-- CATEGORY MODAL -->
+  <div class="modal-overlay" id="catModalOverlay">
+    <div class="modal" style="max-width:420px;">
+      <h2 id="catModalTitle">Nueva Categoría</h2>
+      <form id="catForm">
+        <div class="form-group">
+          <label for="catName">Nombre *</label>
+          <input type="text" id="catName" placeholder="Ej: Perros Calientes" required>
+        </div>
+        <div class="form-group">
+          <label for="catSlug">Slug *</label>
+          <input type="text" id="catSlug" placeholder="Ej: perros" required>
+          <small style="color:#666;font-size:0.72rem;">Identificador único sin espacios. Se genera automáticamente.</small>
+        </div>
+        <div class="form-group">
+          <label for="catIcon">Icono</label>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <input type="text" id="catIcon" placeholder="fa-hotdog" value="fa-fire">
+            <span id="catIconPreview" style="font-size:1.2rem;color:#ff6b00;"><i class="fas fa-fire"></i></span>
+          </div>
+          <small style="color:#666;font-size:0.72rem;">Clase de Font Awesome. Ej: fa-hotdog, fa-drumstick-bite</small>
+        </div>
+        <div class="form-group">
+          <label for="catOrder">Orden</label>
+          <input type="number" id="catOrder" value="0" min="0">
+        </div>
+        <div id="catModalMsg"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeCatModal()">Cancelar</button>
+          <button type="submit" class="btn-save" id="btnSaveCat">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- DELETE CONFIRM MODAL -->
   <div class="modal-overlay" id="deleteOverlay">
     <div class="modal" style="max-width:380px;">
       <div class="delete-modal">
         <div class="trash-icon" id="trashIcon"><i class="fas fa-trash-can"></i></div>
         <div class="check-icon" id="checkIcon"><i class="fas fa-check-circle"></i></div>
-        <h3>¿Eliminar producto?</h3>
-        <p>Esta acción no se puede deshacer.<br>Se eliminará <span class="product-name" id="deleteProductName"></span> permanentemente.</p>
+        <h3 id="deleteTitle">¿Eliminar producto?</h3>
+        <p>Esta acción no se puede deshacer.<br>Se eliminará <span class="product-name" id="deleteItemName"></span> permanentemente.</p>
         <div class="delete-actions" id="deleteActions">
           <button class="btn-cancel-del" onclick="closeDeleteModal()">Cancelar</button>
           <button class="btn-confirm-del" id="btnConfirmDel" onclick="confirmDelete()">Eliminar</button>
@@ -485,6 +638,7 @@
         <tr>
           <th></th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Badge</th><th>Estado</th><th>Acciones</th>
         </tr>`;
+      function catName(slug) { const c = categories.find(x => x.slug === slug); return c ? c.name : slug; }
       for (const p of products) {
         const img = p.image_url
           ? `<img src="${p.image_url.startsWith('http') ? p.image_url : '../' + p.image_url}" alt="${p.name}" class="product-img" loading="lazy">`
@@ -496,7 +650,7 @@
         html += `<tr>
           <td>${img}</td>
           <td><strong>${p.name}</strong></td>
-          <td>${p.category}</td>
+          <td>${catName(p.category)}</td>
           <td>$${parseFloat(p.price).toFixed(2)}</td>
           <td>${badgeHtml}</td>
           <td>${statusHtml}</td>
@@ -526,7 +680,7 @@
           <div class="product-card-body">
             <h4>${p.name}</h4>
             <div class="meta">
-              <span>${p.category}</span>
+              <span>${catName(p.category)}</span>
               ${badgeHtml}
               ${statusHtml}
             </div>
@@ -563,7 +717,7 @@
       document.getElementById('prodName').value = product ? product.name : '';
       document.getElementById('prodDesc').value = product ? (product.description || '') : '';
       document.getElementById('prodPrice').value = product ? product.price : '';
-      document.getElementById('prodCategory').value = product ? product.category : 'philly';
+      document.getElementById('prodCategory').value = product ? product.category : (categories.length > 0 ? categories[0].slug : '');
       document.getElementById('prodImage').value = product ? (product.image_url || '') : '';
       document.getElementById('prodBadge').value = product ? (product.badge || '') : '';
       document.getElementById('prodOrder').value = product ? product.sort_order : 0;
@@ -712,10 +866,15 @@
       loadProducts();
     }
 
-    async function deleteProduct(id) {
+    let deleteMode = 'product';
+    let deletingId = null;
+
+    function deleteProduct(id) {
+      deleteMode = 'product';
       deletingId = id;
       const p = products.find(x => x.id === id);
-      document.getElementById('deleteProductName').textContent = p ? p.name : '';
+      document.getElementById('deleteTitle').textContent = '¿Eliminar producto?';
+      document.getElementById('deleteItemName').textContent = p ? p.name : '';
       document.getElementById('trashIcon').style.display = 'inline-block';
       document.getElementById('trashIcon').classList.remove('deleting');
       document.getElementById('checkIcon').classList.remove('show');
@@ -726,7 +885,21 @@
       document.getElementById('deleteOverlay').classList.add('open');
     }
 
-    let deletingId = null;
+    function deleteCategory(id) {
+      deleteMode = 'category';
+      deletingId = id;
+      const c = categories.find(x => x.id === id);
+      document.getElementById('deleteTitle').textContent = '¿Eliminar categoría?';
+      document.getElementById('deleteItemName').textContent = c ? c.name : '';
+      document.getElementById('trashIcon').style.display = 'inline-block';
+      document.getElementById('trashIcon').classList.remove('deleting');
+      document.getElementById('checkIcon').classList.remove('show');
+      document.getElementById('deleteActions').style.display = 'flex';
+      document.getElementById('btnConfirmDel').disabled = false;
+      document.getElementById('btnConfirmDel').textContent = 'Eliminar';
+      document.getElementById('btnConfirmDel').style.display = '';
+      document.getElementById('deleteOverlay').classList.add('open');
+    }
 
     function closeDeleteModal() {
       document.getElementById('deleteOverlay').classList.remove('open');
@@ -738,7 +911,6 @@
       const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || '';
       if (!token) { alert('Sesi\u00f3n expirada. Inicia sesi\u00f3n de nuevo.'); return; }
 
-      // Animation: trash opens, check appears
       const trash = document.getElementById('trashIcon');
       const check = document.getElementById('checkIcon');
       const actions = document.getElementById('deleteActions');
@@ -753,7 +925,8 @@
         check.classList.add('show');
         actions.style.display = 'none';
 
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${deletingId}`, {
+        const table = deleteMode === 'product' ? 'products' : 'categories';
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${deletingId}`, {
           method: 'DELETE',
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
         });
@@ -762,7 +935,8 @@
 
         setTimeout(() => {
           closeDeleteModal();
-          loadProducts();
+          if (deleteMode === 'product') loadProducts();
+          else loadCategories();
         }, 800);
       }, 600);
     }
@@ -796,6 +970,200 @@
       if (e.key === 'Escape') closeModal();
     });
 
+    // ===== TAB SWITCHING =====
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab' + btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1)).classList.add('active');
+      });
+    });
+
+    // ===== CATEGORIES STATE =====
+    let categories = [];
+    let editingCatId = null;
+
+    async function loadCategories() {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/categories?select=*&order=display_order.asc`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || ''}` }
+      });
+      if (!res.ok) { console.error('Error loading categories', await res.text()); return; }
+      categories = (await res.json()) || [];
+      renderCategories();
+      populateCatSelect();
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('categoriesContainer');
+      if (categories.length === 0) {
+        container.innerHTML = '<div class="empty"><i class="fas fa-tags" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>No hay categorías aún.</div>';
+        return;
+      }
+      container.innerHTML = `<div class="cat-grid">${categories.map(c => `
+        <div class="cat-row">
+          <div class="cat-icon"><i class="fas ${c.icon || 'fa-fire'}"></i></div>
+          <div class="cat-info">
+            <strong>${c.name}</strong>
+            <small>${c.slug} · Orden ${c.display_order}</small>
+          </div>
+          <div class="cat-actions">
+            <button class="btn-icon edit" onclick="editCategory(${c.id})" title="Editar"><i class="fas fa-pen"></i></button>
+            <button class="btn-icon delete" onclick="deleteCategory(${c.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    function populateCatSelect() {
+      const sel = document.getElementById('prodCategory');
+      sel.innerHTML = categories.map(c => `<option value="${c.slug}">${c.name}</option>`).join('');
+    }
+
+    // Category modal
+    function openCatModal(cat = null) {
+      editingCatId = cat ? cat.id : null;
+      document.getElementById('catModalTitle').textContent = cat ? 'Editar Categoría' : 'Nueva Categoría';
+      document.getElementById('catName').value = cat ? cat.name : '';
+      document.getElementById('catSlug').value = cat ? cat.slug : '';
+      document.getElementById('catIcon').value = cat ? (cat.icon || 'fa-fire') : 'fa-fire';
+      document.getElementById('catOrder').value = cat ? cat.display_order : 0;
+      document.getElementById('catModalMsg').textContent = '';
+      document.getElementById('btnSaveCat').textContent = cat ? 'Guardar Cambios' : 'Crear';
+      document.getElementById('catIconPreview').innerHTML = `<i class="fas ${cat ? (cat.icon || 'fa-fire') : 'fa-fire'}"></i>`;
+      document.getElementById('catModalOverlay').classList.add('open');
+    }
+
+    function closeCatModal() {
+      document.getElementById('catModalOverlay').classList.remove('open');
+      editingCatId = null;
+    }
+
+    // Auto-slug from name
+    document.getElementById('catName').addEventListener('input', (e) => {
+      if (!editingCatId) {
+        document.getElementById('catSlug').value = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      }
+    });
+
+    // Icon preview
+    document.getElementById('catIcon').addEventListener('input', (e) => {
+      document.getElementById('catIconPreview').innerHTML = `<i class="fas ${e.target.value || 'fa-fire'}"></i>`;
+    });
+
+    document.getElementById('catForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('catModalMsg');
+      const btn = document.getElementById('btnSaveCat');
+      btn.disabled = true;
+      btn.textContent = 'Guardando...';
+      msg.textContent = '';
+
+      const data = {
+        name: document.getElementById('catName').value.trim(),
+        slug: document.getElementById('catSlug').value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+        icon: document.getElementById('catIcon').value.trim() || 'fa-fire',
+        display_order: parseInt(document.getElementById('catOrder').value) || 0
+      };
+
+      if (!data.name || !data.slug) {
+        msg.textContent = 'Nombre y slug son obligatorios.';
+        msg.style.color = '#ff4500';
+        btn.disabled = false; btn.textContent = 'Guardar'; return;
+      }
+
+      const headers = {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || ''}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      };
+
+      let res;
+      if (editingCatId) {
+        res = await fetch(`${SUPABASE_URL}/rest/v1/categories?id=eq.${editingCatId}`, {
+          method: 'PATCH', headers, body: JSON.stringify(data)
+        });
+      } else {
+        res = await fetch(`${SUPABASE_URL}/rest/v1/categories`, {
+          method: 'POST', headers, body: JSON.stringify(data)
+        });
+      }
+
+      if (!res.ok) {
+        const err = await res.text();
+        msg.textContent = 'Error: ' + (err || res.statusText);
+        msg.style.color = '#ff4500';
+      } else {
+        msg.textContent = editingCatId ? 'Categoría actualizada.' : 'Categoría creada.';
+        msg.style.color = '#4caf50';
+        setTimeout(() => { closeCatModal(); loadCategories(); }, 600);
+      }
+      btn.disabled = false;
+      btn.textContent = editingCatId ? 'Guardar Cambios' : 'Crear';
+    });
+
+    function editCategory(id) {
+      const c = categories.find(x => x.id === id);
+      if (c) openCatModal(c);
+    }
+
+    // ===== SETTINGS =====
+    async function loadSettings() {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/settings?id=eq.1`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || ''}` }
+      });
+      if (!res.ok) { console.error('Error loading settings', await res.text()); return; }
+      const data = (await res.json())[0];
+      if (!data) return;
+      document.getElementById('setPhone').value = data.phone || '';
+      document.getElementById('setWhatsapp').value = data.whatsapp_number || '';
+      document.getElementById('setAddress').value = data.address || '';
+      document.getElementById('setMapsQuery').value = data.maps_query || '';
+      document.getElementById('setMapsEmbed').value = data.maps_embed_src || '';
+      document.getElementById('setTiktok').value = data.tiktok_url || '';
+      document.getElementById('setHoursWeek').value = data.working_hours_week || '';
+      document.getElementById('setHoursSun').value = data.working_hours_sun || '';
+    }
+
+    document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('settingsMsg');
+      msg.textContent = 'Guardando...';
+      msg.style.color = '#ff6b00';
+
+      const data = {
+        phone: document.getElementById('setPhone').value.trim(),
+        whatsapp_number: document.getElementById('setWhatsapp').value.trim(),
+        address: document.getElementById('setAddress').value.trim(),
+        maps_query: document.getElementById('setMapsQuery').value.trim(),
+        maps_embed_src: document.getElementById('setMapsEmbed').value.trim(),
+        tiktok_url: document.getElementById('setTiktok').value.trim(),
+        working_hours_week: document.getElementById('setHoursWeek').value.trim(),
+        working_hours_sun: document.getElementById('setHoursSun').value.trim()
+      };
+
+      const headers = {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').access_token || ''}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      };
+
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/settings?id=eq.1`, {
+        method: 'PATCH', headers, body: JSON.stringify(data)
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        msg.textContent = 'Error: ' + (err || res.statusText);
+        msg.style.color = '#ff4500';
+      } else {
+        msg.textContent = 'Configuración guardada correctamente.';
+        msg.style.color = '#4caf50';
+      }
+    });
+
     // ===== THEME TOGGLE =====
     function updateThemeUI(next) {
       document.querySelectorAll('.theme-toggle i').forEach(el => {
@@ -821,9 +1189,19 @@
       updateThemeUI(savedTheme);
     }
 
+    // Cat modal overlay/escape
+    document.getElementById('catModalOverlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeCatModal();
+    });
+    document.addEventListener('keydown', (eCat) => {
+      if (eCat.key === 'Escape') closeCatModal();
+    });
+
     // ===== INIT =====
     checkAuth();
     loadProducts();
+    loadCategories();
+    loadSettings();
   </script>
   <script>
     if ('serviceWorker' in navigator) {

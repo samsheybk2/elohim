@@ -98,7 +98,38 @@ INSERT INTO products (name, description, price, category, image_url, badge, sort
   ('Jugo Natural', 'Parchita, naranja o limonada. Preparado al momento.', 3.00, 'bebidas', 'products/Jugo Natural.webp', NULL, 3),
   ('Agua', 'Botella de agua mineral 500ml.', 1.50, 'bebidas', 'products/Agua.webp', NULL, 4);
 
--- 7. STORAGE: Bucket para imágenes de productos
+-- 7. TABLA DE CONFIGURACIÓN DEL NEGOCIO
+CREATE TABLE settings (
+  id INTEGER PRIMARY KEY DEFAULT 1,
+  phone TEXT NOT NULL DEFAULT '',
+  address TEXT NOT NULL DEFAULT '',
+  maps_embed_src TEXT NOT NULL DEFAULT '',
+  maps_query TEXT NOT NULL DEFAULT '',
+  whatsapp_number TEXT NOT NULL DEFAULT '',
+  tiktok_url TEXT NOT NULL DEFAULT '',
+  working_hours_week TEXT NOT NULL DEFAULT 'Lun - Sáb: 11:00 AM - 10:00 PM',
+  working_hours_sun TEXT NOT NULL DEFAULT 'Domingo: 12:00 PM - 8:00 PM',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT single_row CHECK (id = 1)
+);
+
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Cualquiera puede leer configuración"
+  ON settings FOR SELECT USING (TRUE);
+
+CREATE POLICY "Admins pueden actualizar configuración"
+  ON settings FOR UPDATE USING (auth.role() = 'authenticated');
+
+-- Insertar fila por defecto
+INSERT INTO settings (id, phone, address, maps_embed_src, maps_query, whatsapp_number, tiktok_url)
+VALUES (1, '+58 424-364-6260', 'Santa Rita, Aragua, Venezuela',
+  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.5!2d-67.5!3d10.2!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e803e5e2e0a0a0b%3A0x0!2zU2FudGEgUml0YSwgQXJhZ3VhLCBWZW5lenVlbGE!5e0!3m2!1ses!2sve!4v1',
+  'Santa+Rita+Aragua+Venezuela',
+  '584243646260',
+  'https://www.tiktok.com/@elohimvnz');
+
+-- 8. STORAGE: Bucket para imágenes de productos
 -- Ejecuta esto en el SQL Editor de Supabase:
 /*
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
