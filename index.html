@@ -1063,13 +1063,7 @@
   <section id="menu" class="alt-bg">
     <div class="container">
       <h2 class="section-title">Nuestro <span>Menú</span></h2>
-      <div class="menu-categories" id="menuCategories">
-        <button class="menu-category-btn active" data-category="all"><i class="fas fa-fire"></i> Todos</button>
-        <button class="menu-category-btn" data-category="philly"><i class="fas fa-drumstick-bite"></i> Philly Cheesesteaks</button>
-        <button class="menu-category-btn" data-category="hamburguesas"><i class="fas fa-burger"></i> Hamburguesas</button>
-        <button class="menu-category-btn" data-category="combos"><i class="fas fa-bullseye"></i> Combos</button>
-        <button class="menu-category-btn" data-category="bebidas"><i class="fas fa-wine-glass"></i> Bebidas</button>
-      </div>
+      <div class="menu-categories" id="menuCategories"></div>
       <div class="menu-grid" id="menuGrid"></div>
     </div>
   </section>
@@ -1240,43 +1234,67 @@
     const whatsappNumber = '584243646260';
 
     // ===== CATEGORY ICONS =====
-    const categoryIcons = {
-      philly: 'fa-drumstick-bite',
-      hamburguesas: 'fa-burger',
-      combos: 'fa-bullseye',
-      bebidas: 'fa-wine-glass'
-    };
-
-    // ===== MENU DATA =====
+    // ===== MENU DATA & CATEGORIES =====
     let menuData = [];
+    let categoriesData = [];
 
     async function loadMenuData() {
-      let data;
       try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&active=eq.true&order=category.asc,sort_order.asc`, {
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }
-        });
-        if (!res.ok) throw new Error(await res.text());
-        data = await res.json();
-      } catch (err) {
-        console.error('Error loading products:', err);
-        document.getElementById('menuGrid').innerHTML = '<p style="text-align:center;color:#888;padding:2rem;">Error al cargar el menú. Intenta de nuevo más tarde.</p>';
-        return;
-      }
-      if (!data) return;
+        const [catRes, prodRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}/rest/v1/categories?select=*&order=sort_order.asc`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY }
+          }),
+          fetch(`${SUPABASE_URL}/rest/v1/products?select=*&active=eq.true&order=category.asc,sort_order.asc`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }
+          })
+        ]);
 
-      menuData = data.map(p => ({
-        id: p.id,
-        name: p.name,
-        desc: p.description,
-        price: parseFloat(p.price),
-        category: p.category,
-        image: p.image_url || null,
-        icon: categoryIcons[p.category] || 'fa-fire',
-        badge: p.badge || null,
-        sort_order: p.sort_order
-      }));
-      renderMenu(activeCategory);
+        if (!catRes.ok) throw new Error('Error loading categories');
+        if (!prodRes.ok) throw new Error(await prodRes.text());
+
+        categoriesData = await catRes.json();
+        const products = await prodRes.json();
+
+        if (!products) return;
+
+        const iconMap = {};
+        categoriesData.forEach(c => { iconMap[c.slug] = c.icon || 'fa-fire'; });
+
+        menuData = products.map(p => ({
+          id: p.id,
+          name: p.name,
+          desc: p.description,
+          price: parseFloat(p.price),
+          category: p.category,
+          image: p.image_url || null,
+          icon: iconMap[p.category] || 'fa-fire',
+          badge: p.badge || null,
+          sort_order: p.sort_order
+        }));
+
+        renderCategories();
+        renderMenu(activeCategory);
+      } catch (err) {
+        console.error('Error loading data:', err);
+        document.getElementById('menuGrid').innerHTML = '<p style="text-align:center;color:#888;padding:2rem;">Error al cargar el menú. Intenta de nuevo más tarde.</p>';
+      }
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('menuCategories');
+      let html = '<button class="menu-category-btn active" data-category="all"><i class="fas fa-fire"></i> Todos</button>';
+      categoriesData.forEach(c => {
+        html += `<button class="menu-category-btn" data-category="${c.slug}"><i class="fas ${c.icon || 'fa-fire'}"></i> ${c.name}</button>`;
+      });
+      container.innerHTML = html;
+      container.querySelectorAll('.menu-category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          container.querySelectorAll('.menu-category-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeCategory = btn.dataset.category;
+          renderMenu(activeCategory);
+        });
+      });
     }
 
     // ===== STATE =====
@@ -1323,16 +1341,6 @@
         </div>
       `).join('');
     }
-
-    // ===== CATEGORY BUTTONS =====
-    document.querySelectorAll('.menu-category-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.menu-category-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeCategory = btn.dataset.category;
-        renderMenu(activeCategory);
-      });
-    });
 
     // ===== CART FUNCTIONS =====
     function addToCart(id) {
