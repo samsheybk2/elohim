@@ -1510,30 +1510,8 @@
     document.getElementById('paymentMethod').addEventListener('change', updateWhatsAppButton);
     acceptTerms.addEventListener('change', updateWhatsAppButton);
 
-    // ===== BUSINESS SETTINGS =====
+    // ===== SETTINGS =====
     let businessSettings = {};
-
-    async function loadSettings() {
-      try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/settings?id=eq.1`, {
-          headers: { 'apikey': SUPABASE_ANON_KEY }
-        });
-        if (!res.ok) return;
-        const data = (await res.json())[0];
-        if (data) businessSettings = data;
-        renderHours();
-      } catch (e) { /* ignore */ }
-    }
-
-    function renderHours() {
-      let h = businessSettings.hours;
-      if (!h) return;
-      if (typeof h === 'string') { try { h = JSON.parse(h); } catch(e) { return; } }
-      const container = document.getElementById('hoursContainer');
-      const dayNames = { monday:'Lunes', tuesday:'Martes', wednesday:'Miércoles', thursday:'Jueves', friday:'Viernes', saturday:'Sábado', sunday:'Domingo' };
-      const order = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
-      container.innerHTML = order.map(d => h[d] ? `<p style="margin-left:1.5rem;"><strong>${dayNames[d]}:</strong> ${h[d]}</p>` : '').join('');
-    }
 
     // ===== SEND ORDER VIA WHATSAPP =====
     function sendOrder(e) {
@@ -1769,6 +1747,52 @@
 
     // ===== FOOTER YEAR =====
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ===== SETTINGS RENDER =====
+    function renderHours() {
+      let h = businessSettings.hours;
+      if (!h) return;
+      if (typeof h === 'string') { try { h = JSON.parse(h); } catch(e) { return; } }
+      const container = document.getElementById('hoursContainer');
+      const dayNames = { monday:'Lunes', tuesday:'Martes', wednesday:'Miércoles', thursday:'Jueves', friday:'Viernes', saturday:'Sábado', sunday:'Domingo' };
+      const order = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+      container.innerHTML = order.map(d => h[d] ? `<p style="margin-left:1.5rem;"><strong>${dayNames[d]}:</strong> ${h[d]}</p>` : '').join('');
+    }
+
+    function renderSettings() {
+      renderHours();
+      const s = businessSettings;
+      if (!s) return;
+      const phoneEl = document.getElementById('phoneDisplay');
+      if (phoneEl && s.phone) phoneEl.textContent = s.phone;
+      const addressLink = document.querySelector('.footer-info a[href*="maps"]');
+      if (addressLink && s.address) {
+        addressLink.textContent = s.address;
+        addressLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`;
+      }
+      const mapsIframe = document.querySelector('.footer-map iframe');
+      if (mapsIframe && s.maps_embed_src) mapsIframe.src = s.maps_embed_src;
+      const tiktokLink = document.querySelector('.footer-social a[aria-label="TikTok"]');
+      if (tiktokLink && s.tiktok_url) tiktokLink.href = s.tiktok_url;
+      const whatsappLink = document.querySelector('.footer-social a[aria-label="WhatsApp"]');
+      if (whatsappLink && s.whatsapp_number) whatsappLink.href = `https://wa.me/${s.whatsapp_number}`;
+      const heroWhatsApp = document.querySelector('.hero-cta .btn-secondary');
+      if (heroWhatsApp && s.whatsapp_number) {
+        heroWhatsApp.href = `https://wa.me/${s.whatsapp_number}?text=¡Hola!%20Quiero%20información%20sobre%20el%20menú`;
+      }
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/settings?id=eq.1`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY }
+        });
+        if (!res.ok) return;
+        const data = (await res.json())[0];
+        if (data) businessSettings = data;
+        renderSettings();
+      } catch (e) { /* ignore */ }
+    }
 
     // ===== INIT =====
     updateCartUI();
