@@ -923,12 +923,14 @@
       flex: 1; display: flex; align-items: center; justify-content: center;
     }
     .open-sign {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0.2rem 0.8rem; border-radius: 6px;
       font-family: 'Bebas Neue',sans-serif;
       font-size: 1.6rem; letter-spacing: 4px; text-transform: uppercase;
-      user-select: none; line-height: 1;
+      border: 2px solid; user-select: none; line-height: 1;
     }
-    .open-sign.open { color: #39ff14; text-shadow: 0 0 10px rgba(57,255,20,0.9), 0 0 30px rgba(57,255,20,0.5); animation: blinkOpen 1.2s ease-in-out infinite; }
-    .open-sign.closed { color: #ff1744; text-shadow: 0 0 10px rgba(255,23,68,0.9), 0 0 30px rgba(255,23,68,0.5); animation: blinkClosed 1.2s ease-in-out infinite; }
+    .open-sign.open { border-color: #39ff14; color: #39ff14; background: rgba(57,255,20,0.06); text-shadow: 0 0 10px rgba(57,255,20,0.9), 0 0 30px rgba(57,255,20,0.5); box-shadow: 0 0 10px rgba(57,255,20,0.3); animation: blinkOpen 1.2s ease-in-out infinite; }
+    .open-sign.closed { border-color: #ff1744; color: #ff1744; background: rgba(255,23,68,0.06); text-shadow: 0 0 10px rgba(255,23,68,0.9), 0 0 30px rgba(255,23,68,0.5); box-shadow: 0 0 10px rgba(255,23,68,0.3); animation: blinkClosed 1.2s ease-in-out infinite; }
     .floating-cart-btn .badge {
       position: absolute;
       top: -4px;
