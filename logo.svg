@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="400" height="120">
+  <defs>
+    <linearGradient id="flame" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff4500"/>
+      <stop offset="100%" stop-color="#ff6b00"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="120" rx="12" fill="#0a0a0a"/>
+  <text x="200" y="50" text-anchor="middle" font-family="'Bebas Neue',Arial Black,sans-serif" font-size="52" font-weight="900" fill="url(#flame)" letter-spacing="6">ELOHIM</text>
+  <text x="200" y="80" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="16" font-weight="600" fill="#aaa" letter-spacing="4">FAST FOOD</text>
+  <line x1="80" y1="90" x2="320" y2="90" stroke="url(#flame)" stroke-width="2" opacity="0.6"/>
+  <text x="200" y="110" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#666" letter-spacing="2">LOS MEJORES PHILLY CHEESESTEAKS</text>
+</svg>

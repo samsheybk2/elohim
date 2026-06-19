@@ -10,6 +10,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ELOHIM">
+  <meta property="og:title" content="ELOHIM FAST FOOD">
+  <meta property="og:description" content="Los mejores Philly Cheesesteaks &bull; Pide por WhatsApp">
+  <meta property="og:image" content="https://raw.githubusercontent.com/samsheybk2/elohim/main/logo.svg">
+  <meta property="og:image:width" content="400">
+  <meta property="og:image:height" content="120">
+  <meta property="og:url" content="https://elohim.vercel.app">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
   <meta name="theme-color" content="#0a0a0a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <style>
@@ -1556,6 +1564,8 @@
       parts.push(`Ubicaci\u00f3n en Google Maps: ${mapsLink}`);
       parts.push('');
       parts.push('\u261d\ufe0f Por favor env\u00eda este mensaje y te atenderemos lo antes posible');
+      parts.push('');
+      parts.push('https://elohim.vercel.app');
       const msg = parts.join('\n');
       window.open(`https://wa.me/${phoneDisplay}?text=${encodeURIComponent(msg)}`, '_blank');
     }
@@ -1638,6 +1648,8 @@
       parts.push(`Ubicaci\u00f3n en Google Maps: ${mapsLink}`);
       parts.push('');
       parts.push('\u261d\ufe0f Por favor env\u00eda este mensaje y te atenderemos lo antes posible');
+      parts.push('');
+      parts.push('https://elohim.vercel.app');
 
       const message = parts.join('\n');
       const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
