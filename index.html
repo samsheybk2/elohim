@@ -917,14 +917,16 @@
     }
     .floating-cart-btn:hover { transform: scale(1.1); }
     /* ===== NEON SIGN IN NAVBAR ===== */
+    .navbar-center {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+    }
     .open-sign {
-      display: inline-flex; align-items: center; justify-content: center;
-      margin-left: 0.6rem; font-family: 'Bebas Neue',sans-serif;
-      font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase;
+      font-family: 'Bebas Neue',sans-serif;
+      font-size: 1.3rem; letter-spacing: 3px; text-transform: uppercase;
       user-select: none; line-height: 1;
     }
-    .open-sign.open { color: #39ff14; text-shadow: 0 0 6px rgba(57,255,20,0.7), 0 0 20px rgba(57,255,20,0.3); }
-    .open-sign.closed { color: #ff1744; text-shadow: 0 0 6px rgba(255,23,68,0.7), 0 0 20px rgba(255,23,68,0.3); }
+    .open-sign.open { color: #39ff14; text-shadow: 0 0 8px rgba(57,255,20,0.8), 0 0 25px rgba(57,255,20,0.4); }
+    .open-sign.closed { color: #ff1744; text-shadow: 0 0 8px rgba(255,23,68,0.8), 0 0 25px rgba(255,23,68,0.4); }
     .floating-cart-btn .badge {
       position: absolute;
       top: -4px;
@@ -1011,8 +1013,10 @@
   <header class="navbar" id="navbar">
     <a href="#hero" class="logo">
       <span class="logo-text">ELOHIM</span>
-      <span class="open-sign" id="openSign"><span id="openSignText">--</span></span>
     </a>
+    <div class="navbar-center">
+      <span class="open-sign" id="openSign"><span id="openSignText">--</span></span>
+    </div>
     <div class="nav-links">
       <a href="#hero">Inicio</a>
       <a href="#menu">Menú</a>
