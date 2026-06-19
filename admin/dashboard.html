@@ -433,12 +433,8 @@
             <input type="text" id="setAddress" placeholder="Santa Rita, Aragua, Venezuela">
           </div>
           <div class="form-group">
-            <label for="setMapsQuery"><i class="fas fa-map"></i> Google Maps query (para direcciones)</label>
-            <input type="text" id="setMapsQuery" placeholder="Santa+Rita+Aragua+Venezuela">
-          </div>
-          <div class="form-group">
-            <label for="setMapsEmbed"><i class="fas fa-code"></i> Google Maps Embed src</label>
-            <textarea id="setMapsEmbed" rows="3" placeholder="https://www.google.com/maps/embed?pb=..."></textarea>
+            <label for="setMapsLink"><i class="fas fa-map"></i> Link de Google Maps</label>
+            <input type="text" id="setMapsLink" placeholder="https://maps.google.com/?q=Santa+Rita+Aragua+Venezuela">
           </div>
           <div class="form-group">
             <label for="setTiktok"><i class="fab fa-tiktok"></i> URL de TikTok</label>
@@ -1162,8 +1158,7 @@
       document.getElementById('setPhone').value = data.phone || '';
       document.getElementById('setWhatsapp').value = data.whatsapp_number || '';
       document.getElementById('setAddress').value = data.address || '';
-      document.getElementById('setMapsQuery').value = data.maps_query || '';
-      document.getElementById('setMapsEmbed').value = data.maps_embed_src || '';
+      document.getElementById('setMapsLink').value = data.maps_link || 'https://maps.google.com/?q=Santa+Rita+Aragua+Venezuela';
       document.getElementById('setTiktok').value = data.tiktok_url || '';
       const days = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
       const hours = data.hours || {};
@@ -1185,8 +1180,7 @@
         phone: document.getElementById('setPhone').value.trim(),
         whatsapp_number: document.getElementById('setWhatsapp').value.trim(),
         address: document.getElementById('setAddress').value.trim(),
-        maps_query: document.getElementById('setMapsQuery').value.trim(),
-        maps_embed_src: document.getElementById('setMapsEmbed').value.trim(),
+        maps_link: document.getElementById('setMapsLink').value.trim(),
         tiktok_url: document.getElementById('setTiktok').value.trim(),
         hours: {
           monday: document.getElementById('hours_monday').value.trim(),

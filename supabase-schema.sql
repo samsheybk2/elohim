@@ -106,8 +106,7 @@ CREATE TABLE settings (
   id INTEGER PRIMARY KEY DEFAULT 1,
   phone TEXT NOT NULL DEFAULT '',
   address TEXT NOT NULL DEFAULT '',
-  maps_embed_src TEXT NOT NULL DEFAULT '',
-  maps_query TEXT NOT NULL DEFAULT '',
+  maps_link TEXT NOT NULL DEFAULT 'https://maps.google.com/?q=Santa+Rita+Aragua+Venezuela',
   whatsapp_number TEXT NOT NULL DEFAULT '',
   tiktok_url TEXT NOT NULL DEFAULT '',
   hours JSONB NOT NULL DEFAULT '{"monday":"11:00 AM - 10:00 PM","tuesday":"11:00 AM - 10:00 PM","wednesday":"11:00 AM - 10:00 PM","thursday":"11:00 AM - 10:00 PM","friday":"11:00 AM - 10:00 PM","saturday":"11:00 AM - 10:00 PM","sunday":"12:00 PM - 8:00 PM"}',
@@ -127,10 +126,9 @@ CREATE POLICY "Admins pueden actualizar configuración"
   ON settings FOR UPDATE USING (auth.role() = 'authenticated');
 
 -- Insertar fila por defecto
-INSERT INTO settings (id, phone, address, maps_embed_src, maps_query, whatsapp_number, tiktok_url, delivery_fee, bolivar_rate, payment_instructions, hours)
+INSERT INTO settings (id, phone, address, maps_link, whatsapp_number, tiktok_url, delivery_fee, bolivar_rate, payment_instructions, hours)
 VALUES (1, '+58 424-364-6260', 'Santa Rita, Aragua, Venezuela',
-  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.5!2d-67.5!3d10.2!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e803e5e2e0a0a0b%3A0x0!2zU2FudGEgUml0YSwgQXJhZ3VhLCBWZW5lenVlbGE!5e0!3m2!1ses!2sve!4v1',
-  'Santa+Rita+Aragua+Venezuela',
+  'https://maps.google.com/?q=Santa+Rita+Aragua+Venezuela',
   '584243646260',
   'https://www.tiktok.com/@elohimvnz',
   3.00, 0,
@@ -151,3 +149,11 @@ CREATE POLICY "Admins can upload product images"
 CREATE POLICY "Admins can delete product images"
   ON storage.objects FOR DELETE USING (bucket_id = 'products' AND auth.uid() IS NOT NULL);
 */
+
+-- ================================================================
+-- MIGRACIÓN: Simplificar ubicación (correr si la tabla settings ya existe)
+-- ================================================================
+-- ALTER TABLE settings ADD COLUMN IF NOT EXISTS maps_link TEXT NOT NULL DEFAULT 'https://maps.google.com/?q=Santa+Rita+Aragua+Venezuela';
+-- ALTER TABLE settings DROP COLUMN IF EXISTS maps_embed_src;
+-- ALTER TABLE settings DROP COLUMN IF EXISTS maps_query;
+-- UPDATE settings SET maps_link = 'https://maps.google.com/?q=Santa+Rita+Aragua+Venezuela' WHERE id = 1;
