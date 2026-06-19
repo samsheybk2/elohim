@@ -1755,10 +1755,12 @@
       const addressLink = document.querySelector('.footer-info a[href*="maps"]');
       if (addressLink && s.address) {
         addressLink.textContent = s.address;
-        addressLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`;
+        addressLink.href = s.maps_link || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`;
       }
       const mapsIframe = document.querySelector('.footer-map iframe');
-      if (mapsIframe && s.maps_link) mapsIframe.src = s.maps_link;
+      if (mapsIframe && s.maps_link) {
+        mapsIframe.src = s.maps_link.includes('/embed') ? s.maps_link : s.maps_link + (s.maps_link.includes('?') ? '&' : '?') + 'output=embed';
+      }
       const tiktokLink = document.querySelector('.footer-social a[aria-label="TikTok"]');
       if (tiktokLink && s.tiktok_url) tiktokLink.href = s.tiktok_url;
       const whatsappLink = document.querySelector('.footer-social a[aria-label="WhatsApp"]');
